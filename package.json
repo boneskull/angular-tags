@@ -1,0 +1,16 @@
+{
+  "name": "angular-tags",
+  "version": "0.0.1",
+  "repository": "git://github.com/decipherinc/angular-tags.git",
+  "devDependencies": {
+    "grunt-contrib-connect": "~0.4.1",
+    "grunt-contrib-qunit": "~0.2.2",
+    "grunt-bower-task": "~0.3.1",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-cli": "~0.1.9",
+    "grunt-html2js": "~0.1.7"
+  },
+  "scripts": {
+    "test": "grunt test"
+  }
+}

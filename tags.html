@@ -1,0 +1,43 @@
+<div class="decipher-tags" data-ng-mousedown="areaSelected()">
+
+  <div class="decipher-tags-taglist">
+    <span data-ng-repeat="tag in tags"
+          data-ng-mousedown="$event.stopPropagation()">
+
+      <span class="decipher-tags-tag" ng-class="getGroupClass(tag)">{{tag.name}}
+      <i class="icon-remove"
+         data-ng-click="remove(tag)">
+      </i>
+      </span>
+    </span>
+  </div>
+
+  <div class="container decipher-tags-input-wrapper" data-ng-show="inputActive">
+    <input ng-if="!srcTags" type="text" data-ng-model="inpTag"
+           class="decipher-tags-input"
+           data-ng-blur="inputBlurred()"
+           data-tags-focus-when-active
+           data-ng-keydown="keypress($event)"/>
+    <input ng-if="srcTags" type="text" data-ng-model="inpTag"
+           class="decipher-tags-input"
+           typeahead="stag as stag.name for stag in srcTags | filter:$viewValue | limitTo:limitTo"
+           data-tags-focus-when-active
+           data-typeahead-on-select="tagSelected()"
+           data-typeahead-editable="allowsEditable"
+           data-ng-blur="inputBlurred()"
+           data-ng-keydown="keypress($event)"/>
+
+  </div>
+  <!--data-typeahead=""-->
+  <!--data-typeahead-on-select="tagSelected()"-->
+  <!--data-typeahead-editable="allowsEditable"-->
+  <!--<div ng-show="hasControls" class="controls">-->
+  <!--<div class="pull-right">-->
+  <!--<button type="button" class="btn btn-sm" data-stop-event="mousedown"-->
+  <!--ng-click="cancelClicked()">Cancel</button>-->
+  <!--<button type="button" class="btn btn-primary btn-sm" data-stop-event="mousedown"-->
+  <!--ng-click="okClicked()">OK</button>-->
+  <!--</div>-->
+  <!--</div>-->
+
+</div>
