@@ -33,7 +33,7 @@
    * controller on both the subdirective and its parent, but I'm not sure
    * if we actually use the same functions in both.
    */
-  tags.controller('TagsCtrl', function ($scope, $timeout, $element) {
+  tags.controller('TagsCtrl', function ($scope, $timeout) {
 
     var deletedSrcTags = [];
 
@@ -111,9 +111,6 @@
      */
     $scope.selectArea = function selectArea() {
       $scope.toggles.inputActive = true;
-      $timeout(function() {
-        $element[0].focus();
-      });
     };
 
     /**
@@ -261,13 +258,11 @@
          * When inputActive toggle changes to true, focus the input.
          * And no I have no idea why this has to be in a timeout.
          */
-        scope.$watch('toggles.inputActive', function (newVal, oldVal) {
-          if (newVal !== oldVal) {
-            if (newVal) {
-              $timeout(function () {
-                element[0].focus();
-              });
-            }
+        scope.$watch('toggles.inputActive', function (newVal) {
+          if (newVal) {
+            $timeout(function () {
+              element[0].focus();
+            });
           }
         });
 
@@ -355,7 +350,7 @@
              * to assign to scope.tags
              * @param value
              */
-            format = function format(value) {
+              format = function format(value) {
               var arr = [],
                 sanitize = function sanitize(tag) {
                   return tag
@@ -393,7 +388,7 @@
               else if (angular.isDefined(value)) {
                 throw 'list of tags must be an array or delimited string';
               }
-             return arr;
+              return arr;
             };
 
           // merge options

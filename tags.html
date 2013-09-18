@@ -19,7 +19,7 @@
            data-ng-model="inputTag"
            class="decipher-tags-input"
            data-typeahead="stag as stag.name for stag in srcTags|filter:$viewValue|orderBy:orderBy"
-           data-typeahead-on-select="add($item)"
+           data-typeahead-on-select="add($item); selectArea()"
            data-typeahead-editable="allowsEditable"/>
 
   </span>
