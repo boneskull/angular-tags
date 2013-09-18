@@ -7,7 +7,7 @@
   var defaultOptions = {
       delimiter: ',', // if given a string model, it splits on this
       classes: {}, // obj of group names to classes
-      orderBy: 'name' // what we order the tags and typeahead by
+      orderBy: 'name', // what we order the tags and typeahead by
     },
 
   // for parsing comprehension expression
@@ -63,10 +63,23 @@
      * @param tag
      */
     $scope.add = function add(tag) {
-      var idx;
+      var idx,
+        _add = function _add(tag) {
+          $scope.tags.push(tag);
+          delete $scope.inputTag;
+          $scope.$emit('decipher.tags.added', {
+            tag: tag
+          });
+        },
+        i;
 
-      $scope.tags.push(tag);
-      delete $scope.inputTag;
+      // don't add dupe names
+      i = $scope.tags.length;
+      while (i--) {
+        if ($scope.tags[i].name === tag.name) {
+          return false;
+        }
+      }
 
       idx = $scope.srcTags.indexOf(tag);
       if (idx >= 0) {
@@ -74,11 +87,14 @@
           $scope.srcTags.splice(idx, 1);
         });
         deletedSrcTags.push(tag);
+        _add(tag);
+        return true;
       }
-
-      $scope.$emit('decipher.tags.added', {
-        tag: tag
-      });
+      else if ($scope.options.addable) {
+        _add(tag);
+        return true;
+      }
+      return false;
     };
 
     /**
@@ -153,10 +169,11 @@
                 cancel();
                 return;
               }
-              scope.add({
+              if (scope.add({
                 name: value
-              });
-              cancel();
+              })) {
+                cancel();
+              }
             }
           },
 
@@ -401,6 +418,8 @@
           // makes a srcTags array full of tag objects out of it.
           scope.srcTags = [];
           if (attrs.src) {
+            // default to NOT letting users add new tags in this case.
+            scope.options.addable = scope.options.addable || false;
             srcResult = parse(attrs.src);
             source = srcResult.source(scope.$parent);
             locals = {};
@@ -422,6 +441,9 @@
                 });
               }
             }
+          } else {
+            // if you didn't specify a src, you must be able to type in new tags.
+            scope.options.addable = true;
           }
         }
       };
