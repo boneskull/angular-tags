@@ -10,10 +10,10 @@
       orderBy: 'name' // what we order the tags and typeahead by
     },
 
-    // for parsing comprehension expression
+  // for parsing comprehension expression
     SRC_REGEXP = /^\s*(.*?)(?:\s+as\s+(.*?))?\s+for\s+(?:([\$\w][\$\w\d]*))\s+in\s+(.*)$/,
 
-    // keycodes
+  // keycodes
     kc = {
       comma: 188,
       enter: 13,
@@ -31,7 +31,7 @@
    * controller on both the subdirective and its parent, but I'm not sure
    * if we actually use the same functions in both.
    */
-  tags.controller('TagsCtrl', function ($scope) {
+  tags.controller('TagsCtrl', function ($scope, $timeout) {
 
     var deletedSrcTags = [];
 
@@ -66,11 +66,13 @@
       var idx;
 
       $scope.tags.push(tag);
-      delete $scope.inputTag;
+//      delete $scope.inputTag;
 
       idx = $scope.srcTags.indexOf(tag);
       if (idx >= 0) {
-        $scope.srcTags.splice(idx, 1);
+        $timeout(function() {
+          $scope.srcTags.splice(idx, 1);
+        });
         deletedSrcTags.push(tag);
       }
 
@@ -136,7 +138,7 @@
           /**
            * Cancels the text input box.
            */
-          cancel = function cancel() {
+            cancel = function cancel() {
             ngModel.$setViewValue('');
             ngModel.$render();
           },
@@ -145,7 +147,7 @@
            * Adds a tag you typed/pasted in unless it's a bunch of delimiters.
            * @param value
            */
-          addTag = function addTag(value) {
+            addTag = function addTag(value) {
             if (value) {
               if (value.match(delimiterRx)) {
                 cancel();
@@ -162,7 +164,7 @@
            * Adds multiple tags in case you pasted them.
            * @param tags
            */
-          addTags = function (tags) {
+            addTags = function (tags) {
             var i;
             for (i = 0; i < tags.length; i++) {
               addTag(tags[i]);
@@ -172,7 +174,7 @@
           /**
            * Backspace one to select, and a second time to delete.
            */
-          removeLastTag = function removeLastTag() {
+            removeLastTag = function removeLastTag() {
             var orderedTags;
             if (scope.toggles.selectedTag) {
               scope.remove(scope.toggles.selectedTag);
@@ -210,16 +212,16 @@
             if (kcCompleteTag.indexOf(evt.keyCode) >= 0) {
               addTag(ngModel.$viewValue);
 
-            // or if you want to get out of the text area
+              // or if you want to get out of the text area
             } else if (kcCancelInput.indexOf(evt.keyCode) >= 0) {
               cancel();
               scope.toggles.inputActive = false;
 
-            // or if you're trying to delete something
+              // or if you're trying to delete something
             } else if (kcRemoveTag.indexOf(evt.keyCode) >= 0) {
               removeLastTag();
 
-            // otherwise if we're typing in here, just drop the selected tag.
+              // otherwise if we're typing in here, just drop the selected tag.
             } else {
               delete scope.toggles.selectedTag;
             }
@@ -272,140 +274,141 @@
   /**
    * Main directive
    */
-  tags.directive('tags', function ($document, $timeout, $parse, decipherTagsOptions) {
+  tags.directive('tags',
+    function ($document, $timeout, $parse, decipherTagsOptions) {
 
-    return {
-      controller: 'TagsCtrl',
-      restrict: 'E',
-      template: '<ng-include data-src="templateUrl"></ng-include>',
-      require: 'ngModel',
-      // we cannot use an isolate scope here due to this issue:
-      // https://github.com/angular/angular.js/issues/1924
-      // either that or I'm too stupid to figure it out
-      scope: true,
-      link: function (scope, element, attrs, ngModel) {
-        var srcResult,
-          source,
-          locals,
-          defaults = angular.copy(defaultOptions),
-          userDefaults = angular.copy(decipherTagsOptions),
+      return {
+        controller: 'TagsCtrl',
+        restrict: 'E',
+        template: '<ng-include data-src="templateUrl"></ng-include>',
+        require: 'ngModel',
+        // we cannot use an isolate scope here due to this issue:
+        // https://github.com/angular/angular.js/issues/1924
+        // either that or I'm too stupid to figure it out
+        scope: true,
+        link: function (scope, element, attrs, ngModel) {
+          var srcResult,
+            source,
+            locals,
+            defaults = angular.copy(defaultOptions),
+            userDefaults = angular.copy(decipherTagsOptions),
 
-          /**
-           * Parses the comprehension expression and gives us interesting bits.
-           * @param input
-           * @returns {{itemName: *, source: *, viewMapper: *, modelMapper: *}}
-           */
-          parse = function parse(input) {
-            var match = input.match(SRC_REGEXP);
-            if (!match) {
-              throw new Error(
-                "Expected src specification in form of '_modelValue_ (as _label_)? for _item_ in _collection_'" +
-                " but got '" + input + "'.");
-            }
+            /**
+             * Parses the comprehension expression and gives us interesting bits.
+             * @param input
+             * @returns {{itemName: *, source: *, viewMapper: *, modelMapper: *}}
+             */
+              parse = function parse(input) {
+              var match = input.match(SRC_REGEXP);
+              if (!match) {
+                throw new Error(
+                  "Expected src specification in form of '_modelValue_ (as _label_)? for _item_ in _collection_'" +
+                  " but got '" + input + "'.");
+              }
 
-            return {
-              itemName: match[3],
-              source: $parse(match[4]),
-              viewMapper: $parse(match[2] || match[1]),
-              modelMapper: $parse(match[1])
+              return {
+                itemName: match[3],
+                source: $parse(match[4]),
+                viewMapper: $parse(match[2] || match[1]),
+                modelMapper: $parse(match[1])
+              };
+
             };
 
+          // merge options
+          scope.options = angular.extend(defaults,
+            angular.extend(userDefaults, scope.$eval(attrs.options)));
+          // break out orderBy for view
+          scope.orderBy = scope.options.orderBy;
+
+          // if we've specified an alternative template, use it.
+          scope.templateUrl = scope.options.templateUrl || 'tags.html';
+
+          // this should be named something else since it's just a collection
+          // of random shit.
+          scope.toggles = {
+            inputActive: false
           };
 
-        // merge options
-        scope.options = angular.extend(defaults,
-          angular.extend(userDefaults, scope.$eval(attrs.options)));
-        // break out orderBy for view
-        scope.orderBy = scope.options.orderBy;
+          /**
+           * if we have a string for the model, turn it into an array of objects.
+           * if we have an array of strings, or an array with strings in it,
+           * turn that into an array of objects.
+           */
+          ngModel.$formatters.push(function (value) {
+            var arr = [],
+              /**
+               * TODO: replace with something from ngSanitize or $sce
+               * or something.
+               * @param tag
+               * @returns {XML|string}
+               */
+                sanitize = function sanitize(tag) {
+                return tag
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;')
+                  .replace(/'/g, '&#39;')
+                  .replace(/"/g, '&quot;');
+              };
 
-        // if we've specified an alternative template, use it.
-        scope.templateUrl = scope.options.templateUrl || 'tags.html';
+            if (angular.isString(value)) {
+              arr = value
+                .split(scope.options.delimiter)
+                .map(function (item) {
+                  return {
+                    name: sanitize(item.trim())
+                  };
+                });
+            }
+            else if (angular.isArray(value)) {
+              arr = value.map(function (item) {
+                if (angular.isString(item)) {
+                  return {
+                    name: sanitize(item.trim())
+                  };
+                }
+                return angular.extend(item, {name: sanitize(item.name)});
+              })
+            }
+            else if (angular.isDefined(value)) {
+              throw 'list of tags must be an array or delimited string';
+            }
+            return arr;
+          });
 
-        // this should be named something else since it's just a collection
-        // of random shit.
-        scope.toggles = {
-          inputActive: false
-        };
+          /**
+           * This doesn't actually render per se, but what it does is two things:
+           * 1. propagates the (new) value of scope.tags to the parent.  If
+           * you happened to have given it a list of strings, you'll get a list
+           * of objects back instead.
+           * 2. sets scope.tags to be used in the template.
+           */
+          ngModel.$render = function $render() {
+            var getter = $parse(attrs.ngModel);
+            getter.assign(scope.$parent, ngModel.$viewValue);
+            scope.tags = ngModel.$viewValue;
+          };
 
-        /**
-         * if we have a string for the model, turn it into an array of objects.
-         * if we have an array of strings, or an array with strings in it,
-         * turn that into an array of objects.
-         */
-        ngModel.$formatters.push(function (value) {
-          var arr = [],
-            /**
-             * TODO: replace with something from ngSanitize or $sce
-             * or something.
-             * @param tag
-             * @returns {XML|string}
-             */
-            sanitize = function sanitize(tag) {
-              return tag
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/'/g, '&#39;')
-                .replace(/"/g, '&quot;');
-            };
-
-          if (angular.isString(value)) {
-            arr = value
-              .split(scope.options.delimiter)
-              .map(function (item) {
-                return {
-                  name: sanitize(item.trim())
-                };
-              });
-          }
-          else if (angular.isArray(value)) {
-            arr = value.map(function (item) {
-              if (angular.isString(item)) {
-                return {
-                  name: sanitize(item.trim())
-                };
+          // this stuff takes the parsed comprehension expression and
+          // makes a srcTags array full of tag objects out of it.
+          scope.srcTags = [];
+          if (attrs.src) {
+            srcResult = parse(attrs.src);
+            source = srcResult.source(scope.$parent);
+            locals = {};
+            if (angular.isDefined(source)) {
+              for (var i = 0; i < source.length; i++) {
+                locals[srcResult.itemName] = source[i];
+                scope.srcTags.push({
+                  name: srcResult.viewMapper(scope.$parent, locals),
+                  value: srcResult.modelMapper(scope.$parent, locals)
+                });
               }
-              return angular.extend(item, {name: sanitize(item.name)});
-            })
-          }
-          else if (angular.isDefined(value)) {
-            throw 'list of tags must be an array or delimited string';
-          }
-          return arr;
-        });
-
-        /**
-         * This doesn't actually render per se, but what it does is two things:
-         * 1. propagates the (new) value of scope.tags to the parent.  If
-         * you happened to have given it a list of strings, you'll get a list
-         * of objects back instead.
-         * 2. sets scope.tags to be used in the template.
-         */
-        ngModel.$render = function $render() {
-          var getter = $parse(attrs.ngModel);
-          getter.assign(scope.$parent, ngModel.$viewValue);
-          scope.tags = ngModel.$viewValue;
-        };
-
-        // this stuff takes the parsed comprehension expression and
-        // makes a srcTags array full of tag objects out of it.
-        scope.srcTags = [];
-        if (attrs.src) {
-          srcResult = parse(attrs.src);
-          source = srcResult.source(scope.$parent);
-          locals = {};
-          if (angular.isDefined(source)) {
-            for (var i = 0; i < source.length; i++) {
-              locals[srcResult.itemName] = source[i];
-              scope.srcTags.push({
-                name: srcResult.viewMapper(scope.$parent, locals),
-                value: srcResult.modelMapper(scope.$parent, locals)
-              });
             }
           }
         }
-      }
-    };
-  });
+      };
+    });
 
 })();
