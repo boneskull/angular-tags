@@ -7,7 +7,6 @@
   var defaultOptions = {
       delimiter: ',', // if given a string model, it splits on this
       classes: {}, // obj of group names to classes
-      orderBy: 'name', // what we order the tags and typeahead by,
       templateUrl: 'tags.html', // default template
       tagTemplateUrl: 'tag.html' // default 'tag' template
     },
@@ -430,6 +429,13 @@
               getter.assign(scope.$parent, value);
             }
           }, true);
+
+          /**
+           * When we receive this event, sort.
+           */
+          scope.$on('decipher.tags.sort', function (evt, data) {
+            scope.orderBy = data;
+          });
 
           // determine what format we're in
           model = scope.$eval(attrs.ngModel);
