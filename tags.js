@@ -50,7 +50,6 @@
       if (tag === $scope.toggles.selectedTag) {
         r.selected = true;
       }
-
       angular.forEach($scope.options.classes, function (klass, groupName) {
         if (tag.group === groupName) {
           r[klass] = true;
@@ -71,7 +70,7 @@
           delete $scope.inputTag;
           $scope.$emit('decipher.tags.added', {
             tag: tag,
-            $id: scope.$id
+            $id: $scope.$id
           });
         },
         fail = function fail() {
@@ -391,7 +390,7 @@
                     item.name = sanitize(item.name.trim());
                   }
                   return item;
-                })
+                });
               }
               else if (angular.isDefined(value)) {
                 throw 'list of tags must be an array or delimited string';
@@ -409,14 +408,6 @@
           // of random shit.
           scope.toggles = {
             inputActive: false
-          };
-
-          /**
-           * Calls format() which formats the scope.tags based on the model
-           * value.
-           */
-          ngModel.$render = function () {
-            scope.tags = format(ngModel.$viewValue);
           };
 
           /**
@@ -461,6 +452,8 @@
               }
             }
           }
+
+          scope.tags = format(scope.$eval(attrs.ngModel));
 
           // this stuff takes the parsed comprehension expression and
           // makes a srcTags array full of tag objects out of it.
