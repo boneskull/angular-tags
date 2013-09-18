@@ -338,6 +338,11 @@
               };
 
             },
+            /**
+             * Takes a raw model value and returns something suitable
+             * to assign to scope.tags
+             * @param value
+             */
             format = function format(value) {
               var arr = [],
                 sanitize = function sanitize(tag) {
@@ -376,9 +381,7 @@
               else if (angular.isDefined(value)) {
                 throw 'list of tags must be an array or delimited string';
               }
-              scope.tags = arr;
-              console.log(scope.tags);
-
+             return arr;
             };
 
           // merge options
@@ -401,7 +404,7 @@
            * value.
            */
           ngModel.$render = function () {
-            format(ngModel.$viewValue);
+            scope.tags = format(ngModel.$viewValue);
           };
 
           /**
