@@ -249,6 +249,9 @@
               // otherwise if we're typing in here, just drop the selected tag.
             } else {
               delete scope.toggles.selectedTag;
+              scope.$emit('decipher.tags.keyup', {
+                value: ngModel.$viewValue
+              });
             }
           });
         });
