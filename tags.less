@@ -9,16 +9,12 @@
     margin-bottom: 4px;
     display: inline;
 
-    .decipher-tags-input-wrapper {
-      display: inline-block;
-    }
-
     .decipher-tags-tag {
       display: inline-block;
       border-radius: 5px;
       background-color: #EFEFEF;
       border: 1px solid #DDD;
-      padding: 1px;
+      padding: 2px;
       margin-right: 5px;
       margin-top: 5px;
     }
@@ -28,8 +24,14 @@
       text-decoration: none;
     }
 
+    .decipher-tags-tag.selected
+    {
+      border: 1px solid red;
+    }
+
     .decipher-tags-tag:hover i {
       color: red;
+
       text-decoration: none;
     }
 

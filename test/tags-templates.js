@@ -17,12 +17,11 @@ angular.module("tags.html", []).run(["$templateCache", function($templateCache) 
     "  </div>\n" +
     "\n" +
     "  <div class=\"container decipher-tags-input-wrapper\" data-ng-show=\"inputActive\">\n" +
-    "    <input ng-if=\"!srcTags\" type=\"text\" data-ng-model=\"inpTag\"\n" +
-    "           class=\"decipher-tags-input\"\n" +
-    "           data-ng-blur=\"inputBlurred()\"\n" +
-    "           data-tags-focus-when-active\n" +
-    "           data-ng-keydown=\"keypress($event)\"/>\n" +
-    "    <input ng-if=\"srcTags\" type=\"text\" data-ng-model=\"inpTag\"\n" +
+    "    <input ng-if=\"!srcTags\"\n" +
+    "           type=\"text\"\n" +
+    "           data-ng-model=\"inpTag\"\n" +
+    "           class=\"decipher-tags-input\"/>\n" +
+    "    <input ng-if=\"srcTags\" type=\"text\" data-tag-input data-ng-model=\"inpTag\"\n" +
     "           class=\"decipher-tags-input\"\n" +
     "           typeahead=\"stag as stag.name for stag in srcTags | filter:$viewValue | limitTo:limitTo\"\n" +
     "           data-tags-focus-when-active\n" +

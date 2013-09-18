@@ -35,7 +35,7 @@ module.exports = function (grunt) {
           'test/test-tags.html',
           'test/test-tags.js'
         ],
-        tasks: ['test']
+        tasks: ['build', 'test']
       }
     },
     html2js: {
@@ -46,8 +46,18 @@ module.exports = function (grunt) {
         src: ['tags.html'],
         dest: 'test/tags-templates.js'
       }
+    },
+    less: {
+      production: {
+        options: {
+          paths: ["."],
+          yuicompress: true
+        },
+        files: {
+          "tags.css": "tags.less"
+        }
+      }
     }
-
   });
 
   grunt.loadNpmTasks('grunt-contrib-qunit');
@@ -55,9 +65,12 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-bower-task');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-html2js');
+  grunt.loadNpmTasks('grunt-contrib-less');
 
-  grunt.registerTask('test', ['bower:install', 'html2js', 'connect', 'qunit']);
-  grunt.registerTask('default', ['test']);
+  grunt.registerTask('test',
+    ['build', 'bower:install', 'html2js', 'connect', 'qunit']);
+  grunt.registerTask('build', ['less']);
+  grunt.registerTask('default', ['build']);
 
   grunt.event.on('qunit.log',
     function (result, actual, expected, message) {
