@@ -23,7 +23,8 @@
     },
     kcCompleteTag = [kc.comma, kc.enter],
     kcRemoveTag = [kc.backspace],
-    kcCancelInput = [kc.esc];
+    kcCancelInput = [kc.esc],
+    id = 0;
 
   tags.constant('decipherTagsOptions', {});
 
@@ -69,12 +70,14 @@
           $scope.tags.push(tag);
           delete $scope.inputTag;
           $scope.$emit('decipher.tags.added', {
-            tag: tag
+            tag: tag,
+            $id: scope.$id
           });
         },
         fail = function fail() {
           $scope.$emit('decipher.tags.addfailed', {
-            tag: tag
+            tag: tag,
+            $id: $scope.$id
           });
         },
         i;
@@ -120,7 +123,8 @@
       $scope.toggles.selectedTag = tag;
 
       $scope.$emit('decipher.tags.selected', {
-        tag: tag
+        tag: tag,
+        $id: $scope.id
       });
     };
 
@@ -141,7 +145,8 @@
       delete $scope.toggles.selectedTag;
 
       $scope.$emit('decipher.tags.removed', {
-        tag: tag
+        tag: tag,
+        $id: $scope.$id
       });
     };
 
@@ -250,7 +255,8 @@
             } else {
               delete scope.toggles.selectedTag;
               scope.$emit('decipher.tags.keyup', {
-                value: ngModel.$viewValue
+                value: ngModel.$viewValue,
+                $id: scope.$id
               });
             }
           });
@@ -292,7 +298,7 @@
             return;
           }
           return tag;
-        })
+        });
       }
     };
   });
@@ -487,6 +493,13 @@
             // if you didn't specify a src, you must be able to type in new tags.
             scope.options.addable = true;
           }
+
+          // emit identifier
+          scope.$id = ++id;
+          scope.$emit('decipher.tags.initialized', {
+            $id: scope.$id,
+            $viewValue: scope.$eval(attrs.ngModel)
+          });
         }
       };
     });
