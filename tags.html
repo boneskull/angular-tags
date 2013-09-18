@@ -4,7 +4,7 @@
     <span data-ng-repeat="tag in tags|orderBy:orderBy"
           data-ng-mousedown="$event.stopPropagation()">
 
-      <span data-ng-click="selectTag(tag)" class="decipher-tags-tag" data-ng-class="getClasses(tag)">{{tag.name}}
+      <span data-ng-click="select(tag)" class="decipher-tags-tag" data-ng-class="getClasses(tag)">{{tag.name}}
       <i class="icon-remove"
          data-ng-click="remove(tag)">
       </i>
@@ -17,6 +17,8 @@
            type="text"
            data-ng-model="inputTag"
            class="decipher-tags-input"/>
+    <!-- may want to fiddle with limitTo here, but it was inhibiting my results
+    so perhaps there is another way -->
     <input ng-if="srcTags"
            type="text"
            data-ng-model="inputTag"
