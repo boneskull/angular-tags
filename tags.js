@@ -66,11 +66,11 @@
       var idx;
 
       $scope.tags.push(tag);
-//      delete $scope.inputTag;
+      delete $scope.inputTag;
 
       idx = $scope.srcTags.indexOf(tag);
       if (idx >= 0) {
-        $timeout(function() {
+        $timeout(function () {
           $scope.srcTags.splice(idx, 1);
         });
         deletedSrcTags.push(tag);
@@ -289,7 +289,11 @@
         link: function (scope, element, attrs, ngModel) {
           var srcResult,
             source,
+            group,
+            value,
+            i,
             locals,
+            obj,
             defaults = angular.copy(defaultOptions),
             userDefaults = angular.copy(decipherTagsOptions),
 
@@ -368,7 +372,10 @@
                     name: sanitize(item.trim())
                   };
                 }
-                return angular.extend(item, {name: sanitize(item.name)});
+                else if (item.name) {
+                  item.name = sanitize(item.name.trim());
+                }
+                return item;
               })
             }
             else if (angular.isDefined(value)) {
@@ -398,11 +405,20 @@
             source = srcResult.source(scope.$parent);
             locals = {};
             if (angular.isDefined(source)) {
-              for (var i = 0; i < source.length; i++) {
+              for (i = 0; i < source.length; i++) {
                 locals[srcResult.itemName] = source[i];
+                obj = {};
+                obj.value = srcResult.modelMapper(scope.$parent, locals);
+                if (obj.value.group) {
+                  group = obj.value.group;
+                }
+                if (obj.value.value) {
+                  value = obj.value.value;
+                }
                 scope.srcTags.push({
                   name: srcResult.viewMapper(scope.$parent, locals),
-                  value: srcResult.modelMapper(scope.$parent, locals)
+                  value: value,
+                  group: group
                 });
               }
             }
