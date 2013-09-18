@@ -311,6 +311,9 @@
             i,
             locals,
             obj,
+            model,
+            pureStrings = false,
+            stringArray = false,
             defaults = angular.copy(defaultOptions),
             userDefaults = angular.copy(decipherTagsOptions),
 
@@ -334,6 +337,48 @@
                 modelMapper: $parse(match[1])
               };
 
+            },
+            format = function format(value) {
+              var arr = [],
+                sanitize = function sanitize(tag) {
+                  return tag
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/'/g, '&#39;')
+                    .replace(/"/g, '&quot;');
+                };
+              if (angular.isUndefined(value)) {
+                return;
+              }
+              if (angular.isString(value)) {
+                arr = value
+                  .split(scope.options.delimiter)
+                  .map(function (item) {
+                    return {
+                      name: sanitize(item.trim())
+                    };
+                  });
+              }
+              else if (angular.isArray(value)) {
+                arr = value.map(function (item) {
+                  if (angular.isString(item)) {
+                    return {
+                      name: sanitize(item.trim())
+                    };
+                  }
+                  else if (item.name) {
+                    item.name = sanitize(item.name.trim());
+                  }
+                  return item;
+                })
+              }
+              else if (angular.isDefined(value)) {
+                throw 'list of tags must be an array or delimited string';
+              }
+              scope.tags = arr;
+              console.log(scope.tags);
+
             };
 
           // merge options
@@ -352,67 +397,48 @@
           };
 
           /**
-           * if we have a string for the model, turn it into an array of objects.
-           * if we have an array of strings, or an array with strings in it,
-           * turn that into an array of objects.
+           * Calls format() which formats the scope.tags based on the model
+           * value.
            */
-          ngModel.$formatters.push(function (value) {
-            var arr = [],
-              /**
-               * TODO: replace with something from ngSanitize or $sce
-               * or something.
-               * @param tag
-               * @returns {XML|string}
-               */
-                sanitize = function sanitize(tag) {
-                return tag
-                  .replace(/&/g, '&amp;')
-                  .replace(/</g, '&lt;')
-                  .replace(/>/g, '&gt;')
-                  .replace(/'/g, '&#39;')
-                  .replace(/"/g, '&quot;');
-              };
-
-            if (angular.isString(value)) {
-              arr = value
-                .split(scope.options.delimiter)
-                .map(function (item) {
-                  return {
-                    name: sanitize(item.trim())
-                  };
-                });
-            }
-            else if (angular.isArray(value)) {
-              arr = value.map(function (item) {
-                if (angular.isString(item)) {
-                  return {
-                    name: sanitize(item.trim())
-                  };
-                }
-                else if (item.name) {
-                  item.name = sanitize(item.name.trim());
-                }
-                return item;
-              })
-            }
-            else if (angular.isDefined(value)) {
-              throw 'list of tags must be an array or delimited string';
-            }
-            return arr;
-          });
+          ngModel.$render = function () {
+            format(ngModel.$viewValue);
+          };
 
           /**
-           * This doesn't actually render per se, but what it does is two things:
-           * 1. propagates the (new) value of scope.tags to the parent.  If
-           * you happened to have given it a list of strings, you'll get a list
-           * of objects back instead.
-           * 2. sets scope.tags to be used in the template.
+           * Watches tags for changes and propagates to outer model
+           * in the format which we originally specified (see below)
            */
-          ngModel.$render = function $render() {
-            var getter = $parse(attrs.ngModel);
-            getter.assign(scope.$parent, ngModel.$viewValue);
-            scope.tags = ngModel.$viewValue;
-          };
+          scope.$watch('tags', function (value, oldValue) {
+            var getter;
+            if (value !== oldValue) {
+              getter = $parse(attrs.ngModel);
+              if (stringArray || pureStrings) {
+                value = value.map(function (tag) {
+                  return tag.name;
+                });
+                if (pureStrings) {
+                  value = value.join(scope.options.delimiter);
+                }
+              }
+              getter.assign(scope.$parent, value);
+            }
+          }, true);
+
+          // determine what format we're in
+          model = scope.$eval(attrs.ngModel);
+          if (angular.isString(model)) {
+            pureStrings = true;
+          }
+          else if (angular.isArray(model)) {
+            stringArray = true;
+            i = model.length;
+            while (i--) {
+              if (!angular.isString(model[i])) {
+                stringArray = false;
+                break;
+              }
+            }
+          }
 
           // this stuff takes the parsed comprehension expression and
           // makes a srcTags array full of tag objects out of it.
