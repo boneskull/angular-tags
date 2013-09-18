@@ -13,13 +13,13 @@
   </div>
 
   <span class="container-fluid" data-ng-show="toggles.inputActive">
-    <input ng-if="!srcTags"
+    <input ng-if="!srcTags.length"
            type="text"
            data-ng-model="inputTag"
            class="decipher-tags-input"/>
     <!-- may want to fiddle with limitTo here, but it was inhibiting my results
     so perhaps there is another way -->
-    <input ng-if="srcTags"
+    <input ng-if="srcTags.length"
            type="text"
            data-ng-model="inputTag"
            class="decipher-tags-input"

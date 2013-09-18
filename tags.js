@@ -24,6 +24,8 @@
     kcRemoveTag = [kc.backspace],
     kcCancelInput = [kc.esc];
 
+  tags.constant('decipherTagsOptions', {});
+
   /**
    * TODO: do we actually share functionality here?  We're using this
    * controller on both the subdirective and its parent, but I'm not sure
@@ -270,7 +272,7 @@
   /**
    * Main directive
    */
-  tags.directive('tags', function ($document, $timeout, $parse) {
+  tags.directive('tags', function ($document, $timeout, $parse, decipherTagsOptions) {
 
     return {
       controller: 'TagsCtrl',
@@ -286,6 +288,7 @@
           source,
           locals,
           defaults = angular.copy(defaultOptions),
+          userDefaults = angular.copy(decipherTagsOptions),
 
           /**
            * Parses the comprehension expression and gives us interesting bits.
@@ -311,7 +314,7 @@
 
         // merge options
         scope.options = angular.extend(defaults,
-          scope.$eval(attrs.options));
+          angular.extend(userDefaults, scope.$eval(attrs.options)));
         // break out orderBy for view
         scope.orderBy = scope.options.orderBy;
 
