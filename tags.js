@@ -7,7 +7,9 @@
   var defaultOptions = {
       delimiter: ',', // if given a string model, it splits on this
       classes: {}, // obj of group names to classes
-      orderBy: 'name', // what we order the tags and typeahead by
+      orderBy: 'name', // what we order the tags and typeahead by,
+      templateUrl: 'tags.html', // default template
+      tagTemplateUrl: 'tag.html' // default 'tag' template
     },
 
   // for parsing comprehension expression
@@ -297,7 +299,7 @@
       return {
         controller: 'TagsCtrl',
         restrict: 'E',
-        template: '<ng-include data-src="templateUrl"></ng-include>',
+        template: '<ng-include data-src="options.templateUrl"></ng-include>',
         require: 'ngModel',
         // we cannot use an isolate scope here due to this issue:
         // https://github.com/angular/angular.js/issues/1924
@@ -389,9 +391,6 @@
             angular.extend(userDefaults, scope.$eval(attrs.options)));
           // break out orderBy for view
           scope.orderBy = scope.options.orderBy;
-
-          // if we've specified an alternative template, use it.
-          scope.templateUrl = scope.options.templateUrl || 'tags.html';
 
           // this should be named something else since it's just a collection
           // of random shit.
