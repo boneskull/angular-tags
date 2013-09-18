@@ -33,7 +33,7 @@
    * controller on both the subdirective and its parent, but I'm not sure
    * if we actually use the same functions in both.
    */
-  tags.controller('TagsCtrl', function ($scope, $timeout) {
+  tags.controller('TagsCtrl', function ($scope, $timeout, $element) {
 
     var deletedSrcTags = [];
 
@@ -73,12 +73,18 @@
             tag: tag
           });
         },
+        fail = function fail() {
+          $scope.$emit('decipher.tags.addfailed', {
+            tag: tag
+          });
+        },
         i;
 
       // don't add dupe names
       i = $scope.tags.length;
       while (i--) {
         if ($scope.tags[i].name === tag.name) {
+          fail();
           return false;
         }
       }
@@ -96,6 +102,7 @@
         _add(tag);
         return true;
       }
+      fail();
       return false;
     };
 
@@ -104,6 +111,9 @@
      */
     $scope.selectArea = function selectArea() {
       $scope.toggles.inputActive = true;
+      $timeout(function() {
+        $element[0].focus();
+      });
     };
 
     /**
