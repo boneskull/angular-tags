@@ -167,6 +167,9 @@
     // since it's a bitch to try and use jquery to work with typeahead
     // just pretend it's there and run the cb.
 
+    // reset this since selectarea should make it true
+    scope.$apply('toggles.inputActive = false');
+
     scope.$apply(function () {
       tpl.scope().add(tpl.scope().srcTags[0]);
       tpl.scope().selectArea();

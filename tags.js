@@ -115,19 +115,6 @@
     };
 
     /**
-     * Select a tag and emit an event.
-     * @param tag
-     */
-    $scope.select = function select(tag) {
-      $scope.toggles.selectedTag = tag;
-
-      $scope.$emit('decipher.tags.selected', {
-        tag: tag,
-        $id: $scope.id
-      });
-    };
-
-    /**
      * Removes a tag.  Restores stuff into srcTags if it came from there.
      * Kills any selected tag.  Emit a decipher.tags.removed event.
      * @param tag
