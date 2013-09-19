@@ -1,0 +1,26 @@
+<div class="decipher-tags" data-ng-mousedown="selectArea()">
+
+  <div class="decipher-tags-taglist">
+    <span data-ng-repeat="tag in tags|orderBy:orderBy"
+          data-ng-mousedown="$event.stopPropagation()">
+      <ng-include src="options.tagTemplateUrl"></ng-include>
+    </span>
+  </div>
+
+  <span class="container-fluid" data-ng-show="toggles.inputActive">
+    <input ng-if="!srcTags.length"
+           type="text"
+           data-ng-model="inputTag"
+           class="decipher-tags-input"/>
+    <!-- may want to fiddle with limitTo here, but it was inhibiting my results
+    so perhaps there is another way -->
+    <input ng-if="srcTags.length"
+           type="text"
+           data-ng-model="inputTag"
+           class="decipher-tags-input"
+           data-typeahead="stag as stag.name for stag in srcTags|filter:$viewValue|orderBy:orderBy"
+           data-typeahead-on-select="add($item); selectArea()"
+           data-typeahead-editable="allowsEditable"/>
+
+  </span>
+</div>

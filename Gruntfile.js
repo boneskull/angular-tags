@@ -45,7 +45,7 @@ module.exports = function (grunt) {
         base: '.'
       },
       dist: {
-        src: ['templates/tags.html', 'templates/tag.html'],
+        src: ['./templates/tags.html', './templates/tag.html'],
         dest: 'dist/generated/templates.js',
         module: 'decipher.tags.templates'
 
@@ -103,6 +103,24 @@ module.exports = function (grunt) {
         src: ['dist/generated/templates.js', 'dist/generated/tags.js'],
         dest: 'dist/<%=pkg.name%>-<%=pkg.version%>-tpls.js'
       }
+    },
+    copy: {
+      dist: {
+        files: [
+          {
+            src: ['templates/tags.html'],
+            dest: 'dist/templates/tags.html'
+          },
+          {
+            src: ['templates/tag.html'],
+            dest: 'dist/templates/tag.html'
+          },
+          {
+            src: ['less/tags.less'],
+            dest: 'dist/<%=pkg.name%>-<%=pkg.version%>.less'
+          }
+        ]
+      }
     }
   });
 
@@ -114,10 +132,11 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   grunt.registerTask('test',
     ['build', 'bower:install', 'connect', 'qunit']);
-  grunt.registerTask('build', ['less', 'html2js', 'concat', 'uglify']);
+  grunt.registerTask('build', ['less', 'html2js', 'copy', 'concat', 'uglify']);
   grunt.registerTask('default', ['build']);
 
   grunt.event.on('qunit.log',
