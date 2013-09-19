@@ -1,7 +1,7 @@
 {
   "name": "angular-tags",
-  "version": "0.1.0",
-  "main": "tags.js",
+  "version": "0.2.0",
+  "main": "dist/angular-tags-0.2.0.js",
   "dependencies": {
     "angular-ui-bootstrap-bower": "~0.6.0"
   },
@@ -21,6 +21,9 @@
     "tests",
     "Gruntfile.js",
     "package.json",
+    ".travis.yml",
+    "src",
+    "dist/generated",
     ".idea"
   ]
 }

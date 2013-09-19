@@ -14,7 +14,7 @@
         ['ng',
          'decipher.tags',
          'ngMock',
-         'templates-main',
+         'decipher.tags.templates',
          'template/typeahead/typeahead-popup.html']);
 
       this.$rootScope = $injector.get('$rootScope');
@@ -38,15 +38,10 @@
   Q.test('taglist', function () {
     var scope = this.scope,
       $compile = this.$compile,
-      markup = '<tags></tags>',
+      markup,
       tpl;
 
-    Q.raises(function () {
-      $compile(markup)(scope);
-      scope.$apply();
-    }, 'tags fails if no ngModel');
-
-    markup = '<tags ng-model="foo"></tags>'
+    markup = '<tags model="foo"></tags>'
     scope.$apply(function () {
       scope.foo = 'lizards, people';
       tpl = $compile(markup)(scope);
@@ -97,7 +92,7 @@
 
 
     markup =
-    '<tags ng-model="foo" options="{classes: {group: \'groupClass\'}}"></tags>'
+    '<tags model="foo" options="{classes: {group: \'groupClass\'}}"></tags>'
     scope.$apply(function () {
       scope.foo = [
         {name: 'owls', group: 'group'},
@@ -133,17 +128,27 @@
       'we sorted since "cheese" is first');
 
     // let's play with src
-    markup = '<tags ng-model="foo" src="honky cat"</tags>';
+    markup = '<tags model="foo" src="honky cat"</tags>';
     Q.raises(function () {
       $compile(markup)(scope);
     }, 'error thrown if bad src');
 
     markup =
-    '<tags ng-model="foo" src="s as s.name for s in stuff"></tags>';
+    '<tags model="foo" src="s.value as s.name for s in stuff"></tags>';
     scope.$apply(function () {
       scope.stuff = [
-        {value: 1, name: 'chickens'},
-        {value: 2, name: 'steer'}
+        {value: 1, name: 'chickens', foo: 'bar'},
+        {value: 2, name: 'steer', foo: 'baz'}
+      ];
+      tpl = $compile(markup)(scope);
+    });
+
+    markup =
+    '<tags model="foo" src="s as s.name for s in stuff"></tags>';
+    scope.$apply(function () {
+      scope.stuff = [
+        {value: 1, name: 'chickens', foo: 'bar'},
+        {value: 2, name: 'steer', foo: 'baz'}
       ];
       tpl = $compile(markup)(scope);
     });
@@ -152,12 +157,14 @@
       {
         "group": undefined,
         "name": "chickens",
-        "value": 1
+        "value": 1,
+        "foo": "bar"
       },
       {
         "group": undefined,
         "name": "steer",
-        "value": 2
+        "value": 2,
+        "foo": "baz"
       }
     ], 'src tags are parsed correctly');
 
@@ -185,8 +192,9 @@
         "group": "group"
       },
       {
+        "value": 1,
         "name": "chickens",
-        "value": 1
+        "foo": "bar"
       }
     ]), 'tags now include "chickens"');
 

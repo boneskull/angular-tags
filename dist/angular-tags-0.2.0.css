@@ -1,0 +1,44 @@
+.decipher-tags {
+  min-height: 24px;
+  border: 1px solid #ccc;
+  margin: 0px 10px;
+  padding: 0px 5px 5px 5px;
+}
+.decipher-tags .decipher-tags-taglist {
+  margin-bottom: 4px;
+  display: inline;
+}
+.decipher-tags .decipher-tags-taglist .decipher-tags-tag {
+  display: inline-block;
+  border-radius: 5px;
+  background-color: #EFEFEF;
+  border: 1px solid #DDD;
+  padding: 2px;
+  margin-right: 5px;
+  margin-top: 5px;
+}
+.decipher-tags .decipher-tags-taglist .decipher-tags-tag i {
+  color: black;
+  text-decoration: none;
+}
+.decipher-tags .decipher-tags-taglist .decipher-tags-tag.selected {
+  border: 1px solid red;
+}
+.decipher-tags .decipher-tags-taglist .decipher-tags-tag:hover i {
+  color: red;
+  text-decoration: none;
+}
+.decipher-tags .decipher-tags-taglist .decipher-tags-tag i {
+  cursor: pointer;
+}
+.decipher-tags .decipher-tags-input {
+  border: none;
+  outline: 0;
+}
+.decipher-tags .decipher-tags-invalid {
+  color: #FFF;
+}
+.decipher-tags .decipher-tags-controls {
+  margin-top: 8px;
+  min-height: 28px;
+}
