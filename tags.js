@@ -16,12 +16,11 @@
 
   // keycodes
     kc = {
-      comma: 188,
       enter: 13,
       esc: 27,
       backspace: 8
     },
-    kcCompleteTag = [kc.comma, kc.enter],
+    kcCompleteTag = [kc.enter],
     kcRemoveTag = [kc.backspace],
     kcCancelInput = [kc.esc],
     id = 0;
@@ -219,22 +218,34 @@
         });
 
         /**
+         * Detects the delimiter.
+         */
+        element.bind('keypress', function (evt) {
+          scope.$apply(function () {
+            if (scope.options.delimiter.charCodeAt() === evt.which) {
+              addTag(ngModel.$viewValue);
+            }
+          });
+        });
+
+        /**
          * Inspects whatever you typed to see if there were character(s) of
          * concern.
          */
-        element.bind('keyup', function (evt) {
+        element.bind('keypress', function (evt) {
           scope.$apply(function () {
             // to "complete" a tag
-            if (kcCompleteTag.indexOf(evt.keyCode) >= 0) {
+
+            if (kcCompleteTag.indexOf(evt.which) >= 0) {
               addTag(ngModel.$viewValue);
 
               // or if you want to get out of the text area
-            } else if (kcCancelInput.indexOf(evt.keyCode) >= 0) {
+            } else if (kcCancelInput.indexOf(evt.which) >= 0) {
               cancel();
               scope.toggles.inputActive = false;
 
               // or if you're trying to delete something
-            } else if (kcRemoveTag.indexOf(evt.keyCode) >= 0) {
+            } else if (kcRemoveTag.indexOf(evt.which) >= 0) {
               removeLastTag();
 
               // otherwise if we're typing in here, just drop the selected tag.
@@ -299,17 +310,16 @@
         controller: 'TagsCtrl',
         restrict: 'E',
         template: '<ng-include data-src="options.templateUrl"></ng-include>',
-        require: 'ngModel',
-        // we cannot use an isolate scope here due to this issue:
-        // https://github.com/angular/angular.js/issues/1924
-        // either that or I'm too stupid to figure it out
-        scope: true,
-        link: function (scope, element, attrs, ngModel) {
+        scope: {
+          model: '='
+        },
+        link: function (scope, element, attrs) {
           var srcResult,
             source,
             group,
             value,
             i,
+            o,
             locals,
             obj,
             model,
@@ -402,9 +412,8 @@
            * in the format which we originally specified (see below)
            */
           scope.$watch('tags', function (value, oldValue) {
-            var getter;
             if (value !== oldValue) {
-              getter = $parse(attrs.ngModel);
+
               if (stringArray || pureStrings) {
                 value = value.map(function (tag) {
                   return tag.name;
@@ -413,7 +422,7 @@
                   value = value.join(scope.options.delimiter);
                 }
               }
-              getter.assign(scope.$parent, value);
+              scope.model = value;
             }
           }, true);
 
@@ -425,7 +434,7 @@
           });
 
           // determine what format we're in
-          model = scope.$eval(attrs.ngModel);
+          model = scope.model;
           if (angular.isString(model)) {
             pureStrings = true;
           }
@@ -440,7 +449,7 @@
             }
           }
 
-          scope.tags = format(scope.$eval(attrs.ngModel));
+          scope.tags = format(scope.model);
 
           // this stuff takes the parsed comprehension expression and
           // makes a srcTags array full of tag objects out of it.
@@ -456,17 +465,28 @@
                 locals[srcResult.itemName] = source[i];
                 obj = {};
                 obj.value = srcResult.modelMapper(scope.$parent, locals);
-                if (obj.value.group) {
+                if (obj.value.group || obj.value.value) {
                   group = obj.value.group;
-                }
-                if (obj.value.value) {
                   value = obj.value.value;
                 }
-                scope.srcTags.push({
-                  name: srcResult.viewMapper(scope.$parent, locals),
-                  value: value,
-                  group: group
-                });
+                else {
+                  value = obj.value;
+                }
+                o = {};
+                if (angular.isObject(obj.value)) {
+                  o = angular.extend(obj.value, {
+                    name: srcResult.viewMapper(scope.$parent, locals),
+                    value: value,
+                    group: group
+                  });
+                } else {
+                  o = {
+                    name: srcResult.viewMapper(scope.$parent, locals),
+                    value: value,
+                    group: group
+                  };
+                }
+                scope.srcTags.push(o);
               }
             }
           } else {
@@ -478,7 +498,7 @@
           scope.$id = ++id;
           scope.$emit('decipher.tags.initialized', {
             $id: scope.$id,
-            $viewValue: scope.$eval(attrs.ngModel)
+            model: scope.model
           });
         }
       };

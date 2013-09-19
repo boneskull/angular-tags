@@ -6,7 +6,7 @@ Pure AngularJS tagging widget with typeahead support courtesy of [ui-bootstrap](
 Current Version
 ---------------
 ```
-0.1.0
+0.2.0
 ```
 
 
@@ -46,7 +46,7 @@ Usage
 This is a directive, so at its most basic:
 
 ```html
-<tags ng-model="foo"></tags>
+<tags model="foo"></tags>
 ```
 
 This will render the tags contained in `foo` (if anything) and provide an input prompt for more tags.
@@ -71,10 +71,114 @@ Likewise if you had an array of strings:
 ['foo', 'bar', 'baz']
 ```
 
-The above directive usage will not use the typeahead functionality of ui-bootstrap.  To use the typehead functionality, which provides a list of tags to choose from, you have to specify some values to read from:
+With Typeahead
+--------------
+
+The above directive usage will not use the typeahead functionality of ui-bootstrap.  To use the typehead functionality, which provides a list of tags from which to choose, you have to specify some values to read from:
 
 ```html
-<tags ng-model="foo" src="b as b.name for b in baz"></tags>
+<tags model="foo" src="b as b.name for b in baz"></tags>
 ```
 
-The value of `src` is a comprehension expression, like found in [ngOptions](http://docs.angularjs.org/api/ng.directive:select).  `baz` here should resemble `foo` as above; a delimited string, an array of strings, or an array of objects.
+The value of `src` is a comprehension expression, like found in [ngOptions](http://docs.angularjs.org/api/ng.directive:select).  `baz` here should resemble `foo` as above; a delimited string, an array of strings, or an array of objects.  See <a href="#tag-objects">Tag Objects</a> below.
+
+*Note*: Here we're using `b` (the entire object) for the value; feel free to use something else, but if we use `b`, the directive will retain any *extra data* you have put in the tag objects:
+
+```javascript
+baz = [
+  {foo: 'bar', value: 'baz', name: 'derp'},
+  {foo: 'spam', value: 'baz', name: 'herp'},
+]
+```
+
+and
+
+```html
+<tags model="foo" src="b.value as b.name for b in baz"></tags>
+```
+
+The resulting source tags will look like this:
+
+```javascript
+baz = [
+  {value: 'baz', name: 'derp'},
+  {value: 'baz', name: 'herp'},
+]
+```
+
+Basically, whatever you set here will become the `value` of these tags unless you specify an entire object.
+
+Tag Objects
+-----------
+
+Tag objects have three main properties:
+
+- `name` The name (display name) of the tag
+- `group` (optional) The "group" of the tag, for assigning class names
+- `value` (optional) The "value" of the tag, which is not displayed
+
+Tag objects can include any other properties you wish to add.
+
+Options
+-----------
+
+### Global Options
+
+To set defaults module-wide, inject the `decipherTagsOptions` constant into anything and modify it:
+
+```javascript
+myModule.config(function(decipherTagsOptions) {
+  decipherTagsOptions.delimiter = ':';
+  decipherTagsOptions.classes = {
+    myGroup: 'myClass',
+    myOtherGroup: 'myOtherClass'
+  };
+});
+```
+
+### Available Options
+
+- `addable` whether or not the user is allowed to type arbitrary tags into the input (defaults to `false` by default if a `src` is supplied, otherwise defaults to `true`; see <a href="#adding-tags">Adding Tags</a> below.
+- `delimiter` what to use for a delimiter when typing or pasting into the input.  Defaults to `,`
+- `classes` An object mapping of group names to class names
+- `templateUrl` URL to the main template. Defaults to `tags.html`
+- `tagTemplateUrl` URL to the "tag" template. Ddefaults to `tag.html`
+
+#### Adding Tags
+
+If you neglect to supply a `src` (thus not using typeahead) you will be able to enter whatever you like into the tags input, adding tags willy-nilly.  If you *do* supply a `src`, by default the user will be limited to what's in the list.  You can override this by passing an `addable` property to the options:
+
+```html
+<tags options="{addable: true}" model="foo" src="b as b.name for b in baz"></tags>
+```
+
+#### Classes
+
+If you specify classes, your tags will each be assigned a class name based on the group.  For example:
+
+```html
+<tags options="{classes: {myGroup: 'myClass'}}" model="foo" src="b as b.name for b in baz></tags>
+```
+
+Now when a tag is added to the list, *and* that tag has the `group` of `myGroup`, it will receive the `myClass` class.  This is useful if you want to change the color of certain tags or something.
+
+Events
+------
+
+The directive will emit certain events based on what's going on:
+
+- `decipher.tags.initialized`: Emitted when the directive is linked.  Data will include a unique `$id` value of the directive and the original `model` value.
+- `decipher.tags.keyup`: Emitted when the user types something into the input.  Data will include the unique `$id` and the `value`, which is what the user has typed so far.  You can attach to this to do validation or anything else.
+- `decipher.tags.added`: Emitted when the user has successfully added a tag.  Data will include the unique `$id` and a `tag` object representing the tag added.
+- `decipher.tags.addfailed`: Emitted when the user tries to add a tag that is not available for whatever reason.  This will occur if the user attempts to add a duplicate tag, or if they attempt to add a tag that is not in the supplied `src` list.  Data will include the unique `$id` and a `tag` object representing the tag that failed to be added.
+- `decipher.tags.removed`: Emitted when the user removes a tag, either via backspacing or clicking on the little `x` in the tag.  Data will include the unique `$id` and a `tag` object representing the tag removed.
+
+License
+=======
+
+MIT
+
+Authors
+=======
+
+Carl Dougan (@carlsgit) and Christopher Hiller (@boneskull)
