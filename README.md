@@ -20,6 +20,7 @@ bower install angular-tags
 Requirements
 ------------
 
+- [AngularJS](http://angularjs.org)
 - [ui-bootstrap](http://angular-ui.github.io/bootstrap) (ui.bootstrap.typeahead module)
 
 Running Tests
@@ -42,6 +43,38 @@ to run the tests.  This will grab the test deps from bower, and run them against
 
 Usage
 =====
+
+### Setup
+
+angular-tags comes in two versions; one with embedded templates and another without.  Without templates:
+
+```html
+<script src="/path/to/angular-tags-VERSION.js"></script>
+```
+
+With templates:
+
+```html
+<script src="/path/to/angular-tags-VERSION-tpls.js"></script>
+```
+
+You will also want to include the CSS if you are using this version:
+
+```html
+<link rel="stylesheet" href="/path/to/angular-tags-VERSION.css"/>
+```
+
+Templates are included in the `templates/` directory if you want to load them manually and/or modify them.
+
+You'll also need to make sure you have included the ui-bootstrap source.
+
+Finally, include the module in your code, and the required `ui.bootstrap.typehead` module:
+
+```javascript
+angular.module('myModule', ['decipher.tags', 'ui.bootstrap.typehead'];
+```
+
+### Directive
 
 This is a directive, so at its most basic:
 
@@ -141,8 +174,8 @@ myModule.config(function(decipherTagsOptions) {
 - `addable` whether or not the user is allowed to type arbitrary tags into the input (defaults to `false` by default if a `src` is supplied, otherwise defaults to `true`; see <a href="#adding-tags">Adding Tags</a> below.
 - `delimiter` what to use for a delimiter when typing or pasting into the input.  Defaults to `,`
 - `classes` An object mapping of group names to class names
-- `templateUrl` URL to the main template. Defaults to `tags.html`
-- `tagTemplateUrl` URL to the "tag" template. Defaults to `tag.html`
+- `templateUrl` URL to the main template. Defaults to `templates/tags.html`
+- `tagTemplateUrl` URL to the "tag" template. Defaults to `templates/tag.html`
 
 #### Adding Tags
 

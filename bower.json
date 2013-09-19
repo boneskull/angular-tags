@@ -23,6 +23,7 @@
     "package.json",
     ".travis.yml",
     "src",
+    "./templates",
     "dist/generated",
     ".idea"
   ]

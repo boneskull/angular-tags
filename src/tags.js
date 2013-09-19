@@ -14,8 +14,8 @@
   var defaultOptions = {
       delimiter: ',', // if given a string model, it splits on this
       classes: {}, // obj of group names to classes
-      templateUrl: 'tags.html', // default template
-      tagTemplateUrl: 'tag.html' // default 'tag' template
+      templateUrl: 'templates/tags.html', // default template
+      tagTemplateUrl: 'templates/tag.html' // default 'tag' template
     },
 
   // for parsing comprehension expression
