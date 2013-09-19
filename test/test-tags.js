@@ -14,7 +14,7 @@
         ['ng',
          'decipher.tags',
          'ngMock',
-         'templates-main',
+         'decipher.tags.templates',
          'template/typeahead/typeahead-popup.html']);
 
       this.$rootScope = $injector.get('$rootScope');
@@ -142,8 +142,6 @@
       ];
       tpl = $compile(markup)(scope);
     });
-
-    console.log(angular.toJson(tpl.scope().srcTags));
 
     markup =
     '<tags model="foo" src="s as s.name for s in stuff"></tags>';
