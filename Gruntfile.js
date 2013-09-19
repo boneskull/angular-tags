@@ -35,7 +35,7 @@ module.exports = function (grunt) {
           'test/test-tags.html',
           'test/test-tags.js'
         ],
-        tasks: ['build', 'test']
+        tasks: ['test']
       }
     },
     html2js: {
@@ -43,7 +43,7 @@ module.exports = function (grunt) {
         base: '.'
       },
       main: {
-        src: ['tags.html'],
+        src: ['tags.html', 'tag.html'],
         dest: 'test/tags-templates.js'
       }
     },

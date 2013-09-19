@@ -3,41 +3,24 @@
   <div class="decipher-tags-taglist">
     <span data-ng-repeat="tag in tags|orderBy:orderBy"
           data-ng-mousedown="$event.stopPropagation()">
-
-      <span data-ng-click="select(tag)" class="decipher-tags-tag" data-ng-class="getClasses(tag)">{{tag.name}}
-      <i class="icon-remove"
-         data-ng-click="remove(tag)">
-      </i>
-      </span>
+      <ng-include src="options.tagTemplateUrl"></ng-include>
     </span>
   </div>
 
   <span class="container-fluid" data-ng-show="toggles.inputActive">
-    <input ng-if="!srcTags"
+    <input ng-if="!srcTags.length"
            type="text"
            data-ng-model="inputTag"
            class="decipher-tags-input"/>
     <!-- may want to fiddle with limitTo here, but it was inhibiting my results
     so perhaps there is another way -->
-    <input ng-if="srcTags"
+    <input ng-if="srcTags.length"
            type="text"
            data-ng-model="inputTag"
            class="decipher-tags-input"
            data-typeahead="stag as stag.name for stag in srcTags|filter:$viewValue|orderBy:orderBy"
-           data-typeahead-on-select="add($item)"
+           data-typeahead-on-select="add($item); selectArea()"
            data-typeahead-editable="allowsEditable"/>
 
   </span>
-  <!--data-typeahead=""-->
-  <!--data-typeahead-on-select="tagSelected()"-->
-  <!--data-typeahead-editable="allowsEditable"-->
-  <!--<div ng-show="hasControls" class="controls">-->
-  <!--<div class="pull-right">-->
-  <!--<button type="button" class="btn btn-sm" data-stop-event="mousedown"-->
-  <!--ng-click="cancelClicked()">Cancel</button>-->
-  <!--<button type="button" class="btn btn-primary btn-sm" data-stop-event="mousedown"-->
-  <!--ng-click="okClicked()">OK</button>-->
-  <!--</div>-->
-  <!--</div>-->
-
 </div>

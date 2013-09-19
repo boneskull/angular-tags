@@ -7,13 +7,14 @@
   var defaultOptions = {
       delimiter: ',', // if given a string model, it splits on this
       classes: {}, // obj of group names to classes
-      orderBy: 'name' // what we order the tags and typeahead by
+      templateUrl: 'tags.html', // default template
+      tagTemplateUrl: 'tag.html' // default 'tag' template
     },
 
-    // for parsing comprehension expression
+  // for parsing comprehension expression
     SRC_REGEXP = /^\s*(.*?)(?:\s+as\s+(.*?))?\s+for\s+(?:([\$\w][\$\w\d]*))\s+in\s+(.*)$/,
 
-    // keycodes
+  // keycodes
     kc = {
       comma: 188,
       enter: 13,
@@ -22,14 +23,17 @@
     },
     kcCompleteTag = [kc.comma, kc.enter],
     kcRemoveTag = [kc.backspace],
-    kcCancelInput = [kc.esc];
+    kcCancelInput = [kc.esc],
+    id = 0;
+
+  tags.constant('decipherTagsOptions', {});
 
   /**
    * TODO: do we actually share functionality here?  We're using this
    * controller on both the subdirective and its parent, but I'm not sure
    * if we actually use the same functions in both.
    */
-  tags.controller('TagsCtrl', function ($scope) {
+  tags.controller('TagsCtrl', function ($scope, $timeout) {
 
     var deletedSrcTags = [];
 
@@ -46,7 +50,6 @@
       if (tag === $scope.toggles.selectedTag) {
         r.selected = true;
       }
-
       angular.forEach($scope.options.classes, function (klass, groupName) {
         if (tag.group === groupName) {
           r[klass] = true;
@@ -61,20 +64,47 @@
      * @param tag
      */
     $scope.add = function add(tag) {
-      var idx;
+      var idx,
+        _add = function _add(tag) {
+          $scope.tags.push(tag);
+          delete $scope.inputTag;
+          $scope.$emit('decipher.tags.added', {
+            tag: tag,
+            $id: $scope.$id
+          });
+        },
+        fail = function fail() {
+          $scope.$emit('decipher.tags.addfailed', {
+            tag: tag,
+            $id: $scope.$id
+          });
+        },
+        i;
 
-      $scope.tags.push(tag);
-      delete $scope.inputTag;
+      // don't add dupe names
+      i = $scope.tags.length;
+      while (i--) {
+        if ($scope.tags[i].name === tag.name) {
+          fail();
+          return false;
+        }
+      }
 
       idx = $scope.srcTags.indexOf(tag);
       if (idx >= 0) {
-        $scope.srcTags.splice(idx, 1);
+        $timeout(function () {
+          $scope.srcTags.splice(idx, 1);
+        });
         deletedSrcTags.push(tag);
+        _add(tag);
+        return true;
       }
-
-      $scope.$emit('decipher.tags.added', {
-        tag: tag
-      });
+      else if ($scope.options.addable) {
+        _add(tag);
+        return true;
+      }
+      fail();
+      return false;
     };
 
     /**
@@ -82,18 +112,6 @@
      */
     $scope.selectArea = function selectArea() {
       $scope.toggles.inputActive = true;
-    };
-
-    /**
-     * Select a tag and emit an event.
-     * @param tag
-     */
-    $scope.select = function select(tag) {
-      $scope.toggles.selectedTag = tag;
-
-      $scope.$emit('decipher.tags.selected', {
-        tag: tag
-      });
     };
 
     /**
@@ -113,7 +131,8 @@
       delete $scope.toggles.selectedTag;
 
       $scope.$emit('decipher.tags.removed', {
-        tag: tag
+        tag: tag,
+        $id: $scope.$id
       });
     };
 
@@ -134,7 +153,7 @@
           /**
            * Cancels the text input box.
            */
-          cancel = function cancel() {
+            cancel = function cancel() {
             ngModel.$setViewValue('');
             ngModel.$render();
           },
@@ -143,16 +162,17 @@
            * Adds a tag you typed/pasted in unless it's a bunch of delimiters.
            * @param value
            */
-          addTag = function addTag(value) {
+            addTag = function addTag(value) {
             if (value) {
               if (value.match(delimiterRx)) {
                 cancel();
                 return;
               }
-              scope.add({
+              if (scope.add({
                 name: value
-              });
-              cancel();
+              })) {
+                cancel();
+              }
             }
           },
 
@@ -160,7 +180,7 @@
            * Adds multiple tags in case you pasted them.
            * @param tags
            */
-          addTags = function (tags) {
+            addTags = function (tags) {
             var i;
             for (i = 0; i < tags.length; i++) {
               addTag(tags[i]);
@@ -170,7 +190,7 @@
           /**
            * Backspace one to select, and a second time to delete.
            */
-          removeLastTag = function removeLastTag() {
+            removeLastTag = function removeLastTag() {
             var orderedTags;
             if (scope.toggles.selectedTag) {
               scope.remove(scope.toggles.selectedTag);
@@ -208,18 +228,22 @@
             if (kcCompleteTag.indexOf(evt.keyCode) >= 0) {
               addTag(ngModel.$viewValue);
 
-            // or if you want to get out of the text area
+              // or if you want to get out of the text area
             } else if (kcCancelInput.indexOf(evt.keyCode) >= 0) {
               cancel();
               scope.toggles.inputActive = false;
 
-            // or if you're trying to delete something
+              // or if you're trying to delete something
             } else if (kcRemoveTag.indexOf(evt.keyCode) >= 0) {
               removeLastTag();
 
-            // otherwise if we're typing in here, just drop the selected tag.
+              // otherwise if we're typing in here, just drop the selected tag.
             } else {
               delete scope.toggles.selectedTag;
+              scope.$emit('decipher.tags.keyup', {
+                value: ngModel.$viewValue,
+                $id: scope.$id
+              });
             }
           });
         });
@@ -228,13 +252,11 @@
          * When inputActive toggle changes to true, focus the input.
          * And no I have no idea why this has to be in a timeout.
          */
-        scope.$watch('toggles.inputActive', function (newVal, oldVal) {
-          if (newVal !== oldVal) {
-            if (newVal) {
-              $timeout(function () {
-                element[0].focus();
-              });
-            }
+        scope.$watch('toggles.inputActive', function (newVal) {
+          if (newVal) {
+            $timeout(function () {
+              element[0].focus();
+            });
           }
         });
 
@@ -262,7 +284,7 @@
             return;
           }
           return tag;
-        })
+        });
       }
     };
   });
@@ -270,139 +292,196 @@
   /**
    * Main directive
    */
-  tags.directive('tags', function ($document, $timeout, $parse) {
+  tags.directive('tags',
+    function ($document, $timeout, $parse, decipherTagsOptions) {
 
-    return {
-      controller: 'TagsCtrl',
-      restrict: 'E',
-      template: '<ng-include data-src="templateUrl"></ng-include>',
-      require: 'ngModel',
-      // we cannot use an isolate scope here due to this issue:
-      // https://github.com/angular/angular.js/issues/1924
-      // either that or I'm too stupid to figure it out
-      scope: true,
-      link: function (scope, element, attrs, ngModel) {
-        var srcResult,
-          source,
-          locals,
-          defaults = angular.copy(defaultOptions),
+      return {
+        controller: 'TagsCtrl',
+        restrict: 'E',
+        template: '<ng-include data-src="options.templateUrl"></ng-include>',
+        require: 'ngModel',
+        // we cannot use an isolate scope here due to this issue:
+        // https://github.com/angular/angular.js/issues/1924
+        // either that or I'm too stupid to figure it out
+        scope: true,
+        link: function (scope, element, attrs, ngModel) {
+          var srcResult,
+            source,
+            group,
+            value,
+            i,
+            locals,
+            obj,
+            model,
+            pureStrings = false,
+            stringArray = false,
+            defaults = angular.copy(defaultOptions),
+            userDefaults = angular.copy(decipherTagsOptions),
 
-          /**
-           * Parses the comprehension expression and gives us interesting bits.
-           * @param input
-           * @returns {{itemName: *, source: *, viewMapper: *, modelMapper: *}}
-           */
-          parse = function parse(input) {
-            var match = input.match(SRC_REGEXP);
-            if (!match) {
-              throw new Error(
-                "Expected src specification in form of '_modelValue_ (as _label_)? for _item_ in _collection_'" +
-                " but got '" + input + "'.");
-            }
+            /**
+             * Parses the comprehension expression and gives us interesting bits.
+             * @param input
+             * @returns {{itemName: *, source: *, viewMapper: *, modelMapper: *}}
+             */
+              parse = function parse(input) {
+              var match = input.match(SRC_REGEXP);
+              if (!match) {
+                throw new Error(
+                  "Expected src specification in form of '_modelValue_ (as _label_)? for _item_ in _collection_'" +
+                  " but got '" + input + "'.");
+              }
 
-            return {
-              itemName: match[3],
-              source: $parse(match[4]),
-              viewMapper: $parse(match[2] || match[1]),
-              modelMapper: $parse(match[1])
+              return {
+                itemName: match[3],
+                source: $parse(match[4]),
+                viewMapper: $parse(match[2] || match[1]),
+                modelMapper: $parse(match[1])
+              };
+
+            },
+            /**
+             * Takes a raw model value and returns something suitable
+             * to assign to scope.tags
+             * @param value
+             */
+              format = function format(value) {
+              var arr = [],
+                sanitize = function sanitize(tag) {
+                  return tag
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/'/g, '&#39;')
+                    .replace(/"/g, '&quot;');
+                };
+              if (angular.isUndefined(value)) {
+                return;
+              }
+              if (angular.isString(value)) {
+                arr = value
+                  .split(scope.options.delimiter)
+                  .map(function (item) {
+                    return {
+                      name: sanitize(item.trim())
+                    };
+                  });
+              }
+              else if (angular.isArray(value)) {
+                arr = value.map(function (item) {
+                  if (angular.isString(item)) {
+                    return {
+                      name: sanitize(item.trim())
+                    };
+                  }
+                  else if (item.name) {
+                    item.name = sanitize(item.name.trim());
+                  }
+                  return item;
+                });
+              }
+              else if (angular.isDefined(value)) {
+                throw 'list of tags must be an array or delimited string';
+              }
+              return arr;
             };
 
+          // merge options
+          scope.options = angular.extend(defaults,
+            angular.extend(userDefaults, scope.$eval(attrs.options)));
+          // break out orderBy for view
+          scope.orderBy = scope.options.orderBy;
+
+          // this should be named something else since it's just a collection
+          // of random shit.
+          scope.toggles = {
+            inputActive: false
           };
 
-        // merge options
-        scope.options = angular.extend(defaults,
-          scope.$eval(attrs.options));
-        // break out orderBy for view
-        scope.orderBy = scope.options.orderBy;
-
-        // if we've specified an alternative template, use it.
-        scope.templateUrl = scope.options.templateUrl || 'tags.html';
-
-        // this should be named something else since it's just a collection
-        // of random shit.
-        scope.toggles = {
-          inputActive: false
-        };
-
-        /**
-         * if we have a string for the model, turn it into an array of objects.
-         * if we have an array of strings, or an array with strings in it,
-         * turn that into an array of objects.
-         */
-        ngModel.$formatters.push(function (value) {
-          var arr = [],
-            /**
-             * TODO: replace with something from ngSanitize or $sce
-             * or something.
-             * @param tag
-             * @returns {XML|string}
-             */
-            sanitize = function sanitize(tag) {
-              return tag
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/'/g, '&#39;')
-                .replace(/"/g, '&quot;');
-            };
-
-          if (angular.isString(value)) {
-            arr = value
-              .split(scope.options.delimiter)
-              .map(function (item) {
-                return {
-                  name: sanitize(item.trim())
-                };
-              });
-          }
-          else if (angular.isArray(value)) {
-            arr = value.map(function (item) {
-              if (angular.isString(item)) {
-                return {
-                  name: sanitize(item.trim())
-                };
+          /**
+           * Watches tags for changes and propagates to outer model
+           * in the format which we originally specified (see below)
+           */
+          scope.$watch('tags', function (value, oldValue) {
+            var getter;
+            if (value !== oldValue) {
+              getter = $parse(attrs.ngModel);
+              if (stringArray || pureStrings) {
+                value = value.map(function (tag) {
+                  return tag.name;
+                });
+                if (pureStrings) {
+                  value = value.join(scope.options.delimiter);
+                }
               }
-              return angular.extend(item, {name: sanitize(item.name)});
-            })
-          }
-          else if (angular.isDefined(value)) {
-            throw 'list of tags must be an array or delimited string';
-          }
-          return arr;
-        });
+              getter.assign(scope.$parent, value);
+            }
+          }, true);
 
-        /**
-         * This doesn't actually render per se, but what it does is two things:
-         * 1. propagates the (new) value of scope.tags to the parent.  If
-         * you happened to have given it a list of strings, you'll get a list
-         * of objects back instead.
-         * 2. sets scope.tags to be used in the template.
-         */
-        ngModel.$render = function $render() {
-          var getter = $parse(attrs.ngModel);
-          getter.assign(scope.$parent, ngModel.$viewValue);
-          scope.tags = ngModel.$viewValue;
-        };
+          /**
+           * When we receive this event, sort.
+           */
+          scope.$on('decipher.tags.sort', function (evt, data) {
+            scope.orderBy = data;
+          });
 
-        // this stuff takes the parsed comprehension expression and
-        // makes a srcTags array full of tag objects out of it.
-        scope.srcTags = [];
-        if (attrs.src) {
-          srcResult = parse(attrs.src);
-          source = srcResult.source(scope.$parent);
-          locals = {};
-          if (angular.isDefined(source)) {
-            for (var i = 0; i < source.length; i++) {
-              locals[srcResult.itemName] = source[i];
-              scope.srcTags.push({
-                name: srcResult.viewMapper(scope.$parent, locals),
-                value: srcResult.modelMapper(scope.$parent, locals)
-              });
+          // determine what format we're in
+          model = scope.$eval(attrs.ngModel);
+          if (angular.isString(model)) {
+            pureStrings = true;
+          }
+          else if (angular.isArray(model)) {
+            stringArray = true;
+            i = model.length;
+            while (i--) {
+              if (!angular.isString(model[i])) {
+                stringArray = false;
+                break;
+              }
             }
           }
+
+          scope.tags = format(scope.$eval(attrs.ngModel));
+
+          // this stuff takes the parsed comprehension expression and
+          // makes a srcTags array full of tag objects out of it.
+          scope.srcTags = [];
+          if (attrs.src) {
+            // default to NOT letting users add new tags in this case.
+            scope.options.addable = scope.options.addable || false;
+            srcResult = parse(attrs.src);
+            source = srcResult.source(scope.$parent);
+            locals = {};
+            if (angular.isDefined(source)) {
+              for (i = 0; i < source.length; i++) {
+                locals[srcResult.itemName] = source[i];
+                obj = {};
+                obj.value = srcResult.modelMapper(scope.$parent, locals);
+                if (obj.value.group) {
+                  group = obj.value.group;
+                }
+                if (obj.value.value) {
+                  value = obj.value.value;
+                }
+                scope.srcTags.push({
+                  name: srcResult.viewMapper(scope.$parent, locals),
+                  value: value,
+                  group: group
+                });
+              }
+            }
+          } else {
+            // if you didn't specify a src, you must be able to type in new tags.
+            scope.options.addable = true;
+          }
+
+          // emit identifier
+          scope.$id = ++id;
+          scope.$emit('decipher.tags.initialized', {
+            $id: scope.$id,
+            $viewValue: scope.$eval(attrs.ngModel)
+          });
         }
-      }
-    };
-  });
+      };
+    });
 
 })();
