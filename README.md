@@ -142,7 +142,7 @@ myModule.config(function(decipherTagsOptions) {
 - `delimiter` what to use for a delimiter when typing or pasting into the input.  Defaults to `,`
 - `classes` An object mapping of group names to class names
 - `templateUrl` URL to the main template. Defaults to `tags.html`
-- `tagTemplateUrl` URL to the "tag" template. Ddefaults to `tag.html`
+- `tagTemplateUrl` URL to the "tag" template. Defaults to `tag.html`
 
 #### Adding Tags
 
