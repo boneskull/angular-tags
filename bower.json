@@ -1,7 +1,7 @@
 {
   "name": "angular-tags",
-  "version": "0.2.0",
-  "main": "dist/angular-tags-0.2.0.js",
+  "version": "0.2.1",
+  "main": "dist/angular-tags-0.2.1.js",
   "dependencies": {
     "angular-ui-bootstrap-bower": "~0.6.0"
   },
@@ -23,7 +23,8 @@
     "package.json",
     ".travis.yml",
     "src",
-    "./templates",
+    "/templates",
+    "/less",
     "dist/generated",
     ".idea"
   ]
