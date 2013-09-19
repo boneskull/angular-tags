@@ -423,7 +423,7 @@
               * Updates the source tag information.  Sets a watch so we
               * know if the source values change.
               */
-             updateSrc = function updateSrc() {
+               updateSrc = function updateSrc() {
                var locals,
                  i,
                  o,
@@ -461,7 +461,7 @@
                    }
                    o = {};
                    if (angular.isObject(obj.value)) {
-                     o = angular.extend(obj.value, {
+                     o = angular.extend(angular.extend(o, obj.value), {
                        name: srcResult.viewMapper(scope.$parent, locals),
                        value: value,
                        group: group
@@ -495,17 +495,20 @@
             * in the format which we originally specified (see below)
             */
            scope.$watch('tags', function (value, oldValue) {
+             var i;
              if (value !== oldValue) {
-
                if (stringArray || pureStrings) {
                  value = value.map(function (tag) {
                    return tag.name;
                  });
+                 scope.model.length = 0;
+                 for (i = 0; i < value.length; i++) {
+                   scope.model.push(value[i]);
+                 }
                  if (pureStrings) {
-                   value = value.join(scope.options.delimiter);
+                   scope.model = value.join(scope.options.delimiter);
                  }
                }
-               scope.model = value;
              }
            }, true);
 

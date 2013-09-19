@@ -1,6 +1,6 @@
 {
   "name": "angular-tags",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "repository": "git://github.com/decipherinc/angular-tags.git",
   "devDependencies": {
     "grunt-contrib-connect": "~0.4.1",
