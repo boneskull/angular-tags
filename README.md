@@ -68,10 +68,10 @@ Templates are included in the `templates/` directory if you want to load them ma
 
 You'll also need to make sure you have included the ui-bootstrap source.
 
-Finally, include the module in your code, and the required `ui.bootstrap.typehead` module:
+Finally, include the module in your code, and the required `ui.bootstrap.typeahead` module:
 
 ```javascript
-angular.module('myModule', ['decipher.tags', 'ui.bootstrap.typehead'];
+angular.module('myModule', ['decipher.tags', 'ui.bootstrap.typeahead'];
 ```
 
 ### Directive
