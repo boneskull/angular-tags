@@ -11,14 +11,20 @@
         media="screen"/>
   <link rel="stylesheet" type="text/css" href="stylesheets/print.css"
         media="print"/>
+  <link rel="stylesheet" type="text/css"
+        href="javascripts/bower_components/angular-tags/dist/angular-tags-0.2.5.css"/>
+  <link rel="stylesheet" type="text/css"
+        href="javascripts/bower_components/bootstrap-css/css/bootstrap.min.css"/>
+  <link rel="stylesheet" type="text/css"
+        href="javascripts/bower_components/font-awesome/css/font-awesome.min.css"/>
   <!--[if lt IE 9]>
   <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
   <script src="javascripts/bower_components/angular/angular.min.js"></script>
   <script
-      src="javascripts/bower_components/angular-ui-bootstrap-bower/ui-bootstrap-tpls.min.js"></script>
+      src="javascripts/bower_components/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js"></script>
   <script
-      src="javascripts/bower_components/angular-tags/dist/angular-tags-0.2.1-tpls.min.js"></script>
+      src="javascripts/bower_components/angular-tags/dist/angular-tags-0.2.5-tpls.js"></script>
   <script src="javascripts/main.js"></script>
   <title>angular-tags by decipherinc</title>
 </head>
@@ -36,9 +42,9 @@
 
     <section id="downloads" class="clearfix">
       <a href="https://github.com/decipherinc/angular-tags/zipball/master"
-         id="download-zip" class="button"><span>Download .zip</span></a>
+         id="download-zip" class="button"><span>D/L .zip</span></a>
       <a href="https://github.com/decipherinc/angular-tags/tarball/master"
-         id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+         id="download-tar-gz" class="button"><span>D/L .tar.gz</span></a>
       <a href="https://github.com/decipherinc/angular-tags" id="view-on-github"
          class="button"><span>View on GitHub</span></a>
     </section>
@@ -58,7 +64,7 @@
                                        input box. The only prerequisite is the
         <code>ui.bootstrap.typeahead</code> module from the <a
             href="http://angular-ui.github.io/bootstrap/">UI Bootstrap</a>
-                                       project for typeahead support.
+                                       project, for typeahead support.
       </p>
 
       <h3>
@@ -70,11 +76,51 @@
       <p>Like this:</p>
 
       <p>
-        <tags data-src="s as s.name for s in sourceTags"
+        <tags data-options="{addable: true}"
+              data-src="s as s.name for s in sourceTags"
               data-model="tags"></tags>
       </p>
+      <h3>
+        <a name="how-do-i-get-it" class="anchor"
+           href="#how-do-i-get-it"><span
+            class="octicon octicon-link"></span></a>Sweet, how do I get it?
+      </h3>
+
+      <pre>bower install angular-tags</pre>
+
+      Grab <a href="http://bower.io">Bower</a> and install this way, or just
+      download
+      the archive or clone from <a
+        href="https://github.com/decipherinc/angular-tags">GitHub</a>.
+
+      <h3>
+        <a name="docs" class="anchor"
+           href="#docs"><span
+            class="octicon octicon-link"></span></a>Docs?
+      </h3>
+
+      <p><a
+          href="https://github.com/decipherinc/angular-tags/blob/master/README.md">Yes.</a>
+      </p>
+
+      <h3>
+        <a name="license" class="anchor"
+           href="#license"><span
+            class="octicon octicon-link"></span></a>License?
+      </h3>
+
+      <p>MIT</p>
 
 
+      <h3>
+        <a name="authors" class="anchor"
+           href="#authors"><span
+            class="octicon octicon-link"></span></a>Authors
+      </h3>
+
+      <p><a href="https://github.com/carlsgit">Carl Dougan</a> and <a
+          href="https://github.com/boneskull">Christopher Hiller</a> at <a
+          href="http://decipherinc.com">Decipher, Inc.</a></p>
     </section>
 
     <footer>

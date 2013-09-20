@@ -1,7 +1,8 @@
 (function () {
   'use strict';
 
-  angular.module('decipher.tags.github.io', ['decipher.tags'])
+  angular.module('decipher.tags.github.io',
+      ['decipher.tags', 'ui.bootstrap.tpls'])
     .controller('MainCtrl', function ($scope) {
 
       $scope.tags = [
@@ -14,7 +15,7 @@
         }
       ];
 
-      $scope.sourceTags = [
+      $scope.sourceTags = $scope.tags.concat([
         {
           name: 'pork', group: 'red'
         },
@@ -30,7 +31,7 @@
         {
           name: 'mutton', group: 'red'
         }
-      ];
+      ]);
 
     });
 })();
