@@ -66,7 +66,8 @@ module.exports = function (grunt) {
       dist: {
         files: {
           'dist/<%= pkg.name %>-<%= pkg.version %>.min.js': [
-            'dist/generated/tags.js']
+            'dist/generated/tags.js'
+          ]
         },
         options: {
           report: 'min',
@@ -118,6 +119,10 @@ module.exports = function (grunt) {
           {
             src: ['less/tags.less'],
             dest: 'dist/<%=pkg.name%>-<%=pkg.version%>.less'
+          },
+          {
+            src: ['src/tags.js'],
+            dest: 'dist/generated/tags.js'
           }
         ]
       }
