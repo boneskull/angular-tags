@@ -359,7 +359,6 @@
              source,
              tags,
              group,
-             value,
              i,
              srcWatch,
              model,
@@ -468,24 +467,18 @@
                    locals[srcResult.itemName] = source[i];
                    obj = {};
                    obj.value = srcResult.modelMapper(scope.$parent, locals);
-                   if (obj.value.group || obj.value.value) {
-                     group = obj.value.group;
-                     value = obj.value.value;
-                   }
-                   else {
-                     value = obj.value;
-                   }
                    o = {};
                    if (angular.isObject(obj.value)) {
                      o = angular.extend(obj.value, {
                        name: srcResult.viewMapper(scope.$parent, locals),
-                       value: value,
-                       group: group
+                       value: obj.value.value,
+                       group: obj.value.group
                      });
-                   } else {
+                   }
+                   else {
                      o = {
                        name: srcResult.viewMapper(scope.$parent, locals),
-                       value: value,
+                       value: obj.value,
                        group: group
                      };
                    }
