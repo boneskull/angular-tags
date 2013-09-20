@@ -521,7 +521,7 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
                    }
                    o = {};
                    if (angular.isObject(obj.value)) {
-                     o = angular.extend(angular.extend(o, obj.value), {
+                     o = angular.extend(obj.value, {
                        name: srcResult.viewMapper(scope.$parent, locals),
                        value: value,
                        group: group
@@ -609,10 +609,10 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
 
            // remove already used tags
            i = scope.tags.length;
-           while(i--) {
+           while (i--) {
              scope._filterSrcTags(scope.tags[i]);
            }
-           
+
            // emit identifier
            scope.$id = ++id;
            scope.$emit('decipher.tags.initialized', {

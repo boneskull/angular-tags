@@ -134,18 +134,27 @@
     }, 'error thrown if bad src');
 
     markup =
-    '<tags model="foo" src="s.value as s.name for s in stuff"></tags>';
+    '<tags model="foo" src="s as s.name for s in stuff"></tags>';
     scope.$apply(function () {
+      var chickens = {value: 1, name: 'chickens', foo: 'bar'};
+      scope.foo = [chickens];
       scope.stuff = [
-        {value: 1, name: 'chickens', foo: 'bar'},
+        chickens,
         {value: 2, name: 'steer', foo: 'baz'}
       ];
       tpl = $compile(markup)(scope);
     });
+    this.$timeout.flush();
+
+    console.log(JSON.stringify(tpl.scope().srcTags));
 
     markup =
     '<tags model="foo" src="s as s.name for s in stuff"></tags>';
     scope.$apply(function () {
+      scope.foo = [
+        {name: 'owls', group: 'group'},
+        {name: 'cheese', group: 'group'}
+      ];
       scope.stuff = [
         {value: 1, name: 'chickens', foo: 'bar'},
         {value: 2, name: 'steer', foo: 'baz'}
