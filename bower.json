@@ -1,7 +1,7 @@
 {
   "name": "angular-tags",
-  "version": "0.2.6",
-  "main": "dist/angular-tags-0.2.6.js",
+  "version": "0.2.7",
+  "main": "dist/angular-tags-0.2.7.js",
   "dependencies": {
     "angular-ui-bootstrap-bower": "~0.6.0",
     "angular": "1.2.0-rc.2",

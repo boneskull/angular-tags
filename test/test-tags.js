@@ -39,7 +39,8 @@
     var scope = this.scope,
       $compile = this.$compile,
       markup,
-      tpl;
+      tpl,
+      $timeout = this.$timeout;
 
     markup = '<tags model="foo"></tags>'
     scope.$apply(function () {
@@ -133,10 +134,10 @@
       $compile(markup)(scope);
     }, 'error thrown if bad src');
 
+    var chickens = {value: 1, name: 'chickens', foo: 'bar'};
     markup =
     '<tags model="foo" src="s as s.name for s in stuff"></tags>';
     scope.$apply(function () {
-      var chickens = {value: 1, name: 'chickens', foo: 'bar'};
       scope.foo = [chickens];
       scope.stuff = [
         chickens,
@@ -144,23 +145,28 @@
       ];
       tpl = $compile(markup)(scope);
     });
-    this.$timeout.flush();
+    $timeout.flush();
 
-    //TODO: assert our srctags have no chickens
+    Q.equal(tpl.scope().srcTags.indexOf(chickens), -1, 'srctags have no "chickens"');
 
+    chickens = {value: 1, name: 'chickens', foo: 'bar'};
     markup =
     '<tags model="foo" src="s as s.name for s in stuff"></tags>';
     scope.$apply(function () {
-      var chickens = {id: 1, name: 'chickens', foo: 'bar'};
       scope.foo = [chickens];
       scope.stuff = [
         chickens,
-        {id: 2, name: 'steer', foo: 'baz'}
+        {value: 2, name: 'steer', foo: 'baz'}
       ];
       tpl = $compile(markup)(scope);
     });
 
-    // TODO: assert id doesn't bust things
+    scope.$apply('foo = []');
+    Q.deepEqual(tpl.scope().tags, [], 'tags is now empty');
+    Q.deepEqual(angular.toJson(tpl.scope().srcTags), angular.toJson([
+      {value: 1, name: 'chickens', foo: 'bar'},
+      {value: 2, name: 'steer', foo: 'baz'}
+    ]), 'srcTags have all the things');
 
     markup =
     '<tags model="foo" src="s as s.name for s in stuff"></tags>';
@@ -222,7 +228,7 @@
     ]), 'tags now include "chickens"');
 
     // srcTags splice happens in a timeout, so flush it.
-    this.$timeout.flush();
+    $timeout.flush();
     Q.equal(tpl.scope().srcTags.length, 1, '"chickens" removed from srcTags');
     Q.ok(tpl.scope().toggles.inputActive, 'input is active');
   });
