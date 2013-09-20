@@ -74,6 +74,7 @@
         var idx = $scope.srcTags.indexOf(tag);
 
         if (idx >= 0) {
+          // wrapped in timeout or typeahead becomes confused
           $timeout(function () {
             $scope.srcTags.splice(idx, 1);
           });
@@ -90,8 +91,7 @@
        * @param tag
        */
       $scope.add = function add(tag) {
-        var idx,
-          _add = function _add(tag) {
+        var _add = function _add(tag) {
             $scope.tags.push(tag);
             delete $scope.inputTag;
             $scope.$emit('decipher.tags.added', {
@@ -147,7 +147,9 @@
 
         if (idx = deletedSrcTags.indexOf(tag) >= 0) {
           deletedSrcTags.splice(idx, 1);
-          $scope.srcTags.push(tag);
+          if ($scope.srcTags.indexOf(tag) === -1) {
+            $scope.srcTags.push(tag);
+          }
         }
 
         delete $scope.toggles.selectedTag;
@@ -228,8 +230,7 @@
                  $filter('orderBy')(scope.tags,
                    scope.orderBy);
                  scope.toggles.selectedTag =
-                 orderedTags[orderedTags.length -
-                             1];
+                 orderedTags[orderedTags.length - 1];
                }
              };
 
@@ -360,6 +361,7 @@
              tags,
              group,
              i,
+             tagsWatch,
              srcWatch,
              model,
              pureStrings = false,
@@ -388,6 +390,34 @@
                  modelMapper: $parse(match[1])
                };
 
+             },
+
+             watchTags = function () {
+
+               /**
+                * Watches tags for changes and propagates to outer model
+                * in the format which we originally specified (see below)
+                */
+               tagsWatch = scope.$watch('tags', function (value, oldValue) {
+                 var i;
+                 if (value !== oldValue) {
+                   if (stringArray || pureStrings) {
+                     value = value.map(function (tag) {
+                       return tag.name;
+                     });
+                     if (angular.isArray(scope.model)) {
+                       scope.model.length = 0;
+                       for (i = 0; i < value.length; i++) {
+                         scope.model.push(value[i]);
+                       }
+                     }
+                     if (pureStrings) {
+                       scope.model = value.join(scope.options.delimiter);
+                     }
+                   }
+
+                 }
+               }, true);
              },
              /**
               * Takes a raw model value and returns something suitable
@@ -499,27 +529,6 @@
              inputActive: false
            };
 
-           /**
-            * Watches tags for changes and propagates to outer model
-            * in the format which we originally specified (see below)
-            */
-           scope.$watch('tags', function (value, oldValue) {
-             var i;
-             if (value !== oldValue) {
-               if (stringArray || pureStrings) {
-                 value = value.map(function (tag) {
-                   return tag.name;
-                 });
-                 scope.model.length = 0;
-                 for (i = 0; i < value.length; i++) {
-                   scope.model.push(value[i]);
-                 }
-                 if (pureStrings) {
-                   scope.model = value.join(scope.options.delimiter);
-                 }
-               }
-             }
-           }, true);
 
            /**
             * When we receive this event, sort.
@@ -544,8 +553,23 @@
              }
            }
 
-           // remove already-used stuff out of the src
-           scope.tags = format(scope.model);
+           // watch model for changes and update tags as appropriate
+           scope.tags = [];
+           scope.$watch('model', function (newVal) {
+             if (angular.isDefined(newVal)) {
+               tagsWatch();
+               scope.tags = format(newVal);
+               // remove already used tags
+               i = scope.tags.length;
+               while (i--) {
+                 scope._filterSrcTags(scope.tags[i]);
+               }
+               watchTags();
+             }
+           });
+
+           watchTags();
+
            // this stuff takes the parsed comprehension expression and
            // makes a srcTags array full of tag objects out of it.
            scope.srcTags = [];
@@ -554,12 +578,6 @@
            } else {
              // if you didn't specify a src, you must be able to type in new tags.
              scope.options.addable = true;
-           }
-
-           // remove already used tags
-           i = scope.tags.length;
-           while (i--) {
-             scope._filterSrcTags(scope.tags[i]);
            }
 
            // emit identifier
