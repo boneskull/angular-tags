@@ -146,7 +146,21 @@
     });
     this.$timeout.flush();
 
-    console.log(JSON.stringify(tpl.scope().srcTags));
+    //TODO: assert our srctags have no chickens
+
+    markup =
+    '<tags model="foo" src="s as s.name for s in stuff"></tags>';
+    scope.$apply(function () {
+      var chickens = {id: 1, name: 'chickens', foo: 'bar'};
+      scope.foo = [chickens];
+      scope.stuff = [
+        chickens,
+        {id: 2, name: 'steer', foo: 'baz'}
+      ];
+      tpl = $compile(markup)(scope);
+    });
+
+    // TODO: assert id doesn't bust things
 
     markup =
     '<tags model="foo" src="s as s.name for s in stuff"></tags>';
