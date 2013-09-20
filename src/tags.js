@@ -529,12 +529,19 @@
              inputActive: false
            };
 
-
            /**
             * When we receive this event, sort.
             */
            scope.$on('decipher.tags.sort', function (evt, data) {
              scope.orderBy = data;
+           });
+
+           attrs.$observe('typeaheadOptions', function(newVal) {
+             if(newVal) {
+               scope.typeaheadOptions = $parse(newVal)(scope.$parent);
+             } else {
+               scope.typeaheadOptions = {};
+             }
            });
 
            // determine what format we're in

@@ -147,7 +147,8 @@
     });
     $timeout.flush();
 
-    Q.equal(tpl.scope().srcTags.indexOf(chickens), -1, 'srctags have no "chickens"');
+    Q.equal(tpl.scope().srcTags.indexOf(chickens), -1,
+      'srctags have no "chickens"');
 
     chickens = {value: 1, name: 'chickens', foo: 'bar'};
     markup =
@@ -169,8 +170,9 @@
     ]), 'srcTags have all the things');
 
     markup =
-    '<tags model="foo" src="s as s.name for s in stuff"></tags>';
+    '<tags model="foo" typeahead-options="{minLength: minLength}" src="s as s.name for s in stuff"></tags>';
     scope.$apply(function () {
+      scope.minLength = 3;
       scope.foo = [
         {name: 'owls', group: 'group'},
         {name: 'cheese', group: 'group'}
@@ -199,6 +201,9 @@
 
     Q.equal(tpl.find('.typeahead').length, 1,
       'typeahead popup is injected into DOM');
+
+    Q.equal(tpl.find('input').attr('data-typeahead-min-length'), '3',
+      'assert min length made it into typeahead options');
 
     // since it's a bitch to try and use jquery to work with typeahead
     // just pretend it's there and run the cb.
