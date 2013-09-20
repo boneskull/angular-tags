@@ -1,3 +1,47 @@
+angular.module('decipher.tags.templates', ['templates/tags.html', 'templates/tag.html']);
+
+angular.module("templates/tags.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/tags.html",
+    "<div class=\"decipher-tags\" data-ng-mousedown=\"selectArea()\">\n" +
+    "\n" +
+    "  <div class=\"decipher-tags-taglist\">\n" +
+    "    <span data-ng-repeat=\"tag in tags|orderBy:orderBy\"\n" +
+    "          data-ng-mousedown=\"$event.stopPropagation()\">\n" +
+    "      <ng-include src=\"options.tagTemplateUrl\"></ng-include>\n" +
+    "    </span>\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <span class=\"container-fluid\" data-ng-show=\"toggles.inputActive\">\n" +
+    "    <input ng-if=\"!srcTags.length\"\n" +
+    "           type=\"text\"\n" +
+    "           data-ng-model=\"inputTag\"\n" +
+    "           class=\"decipher-tags-input\"/>\n" +
+    "    <!-- may want to fiddle with limitTo here, but it was inhibiting my results\n" +
+    "    so perhaps there is another way -->\n" +
+    "    <input ng-if=\"srcTags.length\"\n" +
+    "           type=\"text\"\n" +
+    "           data-ng-model=\"inputTag\"\n" +
+    "           class=\"decipher-tags-input\"\n" +
+    "           data-typeahead=\"stag as stag.name for stag in srcTags|filter:$viewValue|orderBy:orderBy\"\n" +
+    "           data-typeahead-on-select=\"add($item); selectArea()\"\n" +
+    "           data-typeahead-editable=\"allowsEditable\"/>\n" +
+    "\n" +
+    "  </span>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("templates/tag.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/tag.html",
+    "<span class=\"decipher-tags-tag\"\n" +
+    "      data-ng-class=\"getClasses(tag)\">{{tag.name}}\n" +
+    "      <i class=\"icon-remove\"\n" +
+    "         data-ng-click=\"remove(tag)\">\n" +
+    "      </i>\n" +
+    "</span>\n" +
+    "");
+}]);
+
 /*global angular*/
 (function () {
   'use strict';
@@ -66,6 +110,25 @@
       };
 
       /**
+       * Finds a tag in the src list and removes it.
+       * @param tag
+       * @returns {boolean}
+       */
+      $scope._filterSrcTags = function filterSrcTags(tag) {
+        var idx = $scope.srcTags.indexOf(tag);
+
+        if (idx >= 0) {
+          $timeout(function () {
+            $scope.srcTags.splice(idx, 1);
+          });
+          deletedSrcTags.push(tag);
+          return true;
+        }
+        return false;
+
+      };
+
+      /**
        * Adds a tag to the list of tags, and if in the typeahead list,
        * removes it from that list (and saves it).  emits decipher.tags.added
        * @param tag
@@ -97,12 +160,8 @@
           }
         }
 
-        idx = $scope.srcTags.indexOf(tag);
-        if (idx >= 0) {
-          $timeout(function () {
-            $scope.srcTags.splice(idx, 1);
-          });
-          deletedSrcTags.push(tag);
+
+        if ($scope._filterSrcTags(tag)) {
           _add(tag);
           return true;
         }
@@ -342,6 +401,7 @@
          link: function (scope, element, attrs) {
            var srcResult,
              source,
+             tags,
              group,
              value,
              i,
@@ -535,8 +595,8 @@
              }
            }
 
+           // remove already-used stuff out of the src
            scope.tags = format(scope.model);
-
            // this stuff takes the parsed comprehension expression and
            // makes a srcTags array full of tag objects out of it.
            scope.srcTags = [];
@@ -547,6 +607,12 @@
              scope.options.addable = true;
            }
 
+           // remove already used tags
+           i = scope.tags.length;
+           while(i--) {
+             scope._filterSrcTags(scope.tags[i]);
+           }
+           
            // emit identifier
            scope.$id = ++id;
            scope.$emit('decipher.tags.initialized', {
