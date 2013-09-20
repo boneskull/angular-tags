@@ -44,6 +44,11 @@ to run the tests.  This will grab the test deps from bower, and run them against
 Usage
 =====
 
+### Demo
+
+<a href="http://decipherinc.github.io/angular-tags">Demo here</a>.
+
+
 ### Setup
 
 angular-tags comes in two versions; one with embedded templates and another without.  Without templates:
