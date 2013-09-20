@@ -75,23 +75,21 @@ module.exports = function (grunt) {
                      ' pkg.name %>-<%= pkg.version %>.map.js',
           sourceMapRoot: '/',
           sourceMapPrefix: 1,
-          sourceMappingURL: 'dist/<%=' +
-                            ' pkg.name %>-<%= pkg.version %>.map.js'
+          sourceMappingURL: '<%= pkg.name %>-<%= pkg.version %>.map.js'
         }
       },
       distTpls: {
         files: {
           'dist/<%= pkg.name %>-<%= pkg.version %>-tpls.min.js': [
-            'dist/generated/*.js']
+            'dist/generated/*.js'
+          ]
         },
         options: {
           report: 'min',
-          sourceMap: 'dist/<%=' +
-                     ' pkg.name %>-<%= pkg.version %>-tpls.map.js',
+          sourceMap: 'dist/<%= pkg.name %>-<%= pkg.version %>-tpls.map.js',
           sourceMapRoot: '/',
           sourceMapPrefix: 1,
-          sourceMappingURL: 'dist/<%=' +
-                            ' pkg.name %>-<%= pkg.version %>-tpls.map.js'
+          sourceMappingURL: '<%= pkg.name %>-<%= pkg.version %>-tpls.map.js'
         }
       }
     },

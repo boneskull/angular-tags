@@ -1,15 +1,17 @@
 {
   "name": "angular-tags",
-  "version": "0.2.2",
-  "main": "dist/angular-tags-0.2.1.js",
+  "version": "0.2.3",
+  "main": "dist/angular-tags-0.2.3.js",
   "dependencies": {
-    "angular-ui-bootstrap-bower": "~0.6.0"
+    "angular-ui-bootstrap-bower": "~0.6.0",
+    "angular": "1.2.0-rc.2",
+    "font-awesome": "~3.2.1",
+    "bootstrap-css": "~3.0.0"
   },
   "devDependencies": {
     "sinonjs": "1.7.1",
     "sinon-qunit": "1.0.0",
     "qunit": "1.12.0",
-    "angular": "1.2.0-rc.2",
     "angular-mocks": "1.2.0-rc.2",
     "jquery": "~2.0.3"
   },

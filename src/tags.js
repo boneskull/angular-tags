@@ -66,6 +66,25 @@
       };
 
       /**
+       * Finds a tag in the src list and removes it.
+       * @param tag
+       * @returns {boolean}
+       */
+      $scope._filterSrcTags = function filterSrcTags(tag) {
+        var idx = $scope.srcTags.indexOf(tag);
+
+        if (idx >= 0) {
+          $timeout(function () {
+            $scope.srcTags.splice(idx, 1);
+          });
+          deletedSrcTags.push(tag);
+          return true;
+        }
+        return false;
+
+      };
+
+      /**
        * Adds a tag to the list of tags, and if in the typeahead list,
        * removes it from that list (and saves it).  emits decipher.tags.added
        * @param tag
@@ -97,12 +116,8 @@
           }
         }
 
-        idx = $scope.srcTags.indexOf(tag);
-        if (idx >= 0) {
-          $timeout(function () {
-            $scope.srcTags.splice(idx, 1);
-          });
-          deletedSrcTags.push(tag);
+
+        if ($scope._filterSrcTags(tag)) {
           _add(tag);
           return true;
         }
@@ -342,6 +357,7 @@
          link: function (scope, element, attrs) {
            var srcResult,
              source,
+             tags,
              group,
              value,
              i,
@@ -535,8 +551,8 @@
              }
            }
 
+           // remove already-used stuff out of the src
            scope.tags = format(scope.model);
-
            // this stuff takes the parsed comprehension expression and
            // makes a srcTags array full of tag objects out of it.
            scope.srcTags = [];
@@ -545,6 +561,12 @@
            } else {
              // if you didn't specify a src, you must be able to type in new tags.
              scope.options.addable = true;
+           }
+
+           // remove already used tags
+           i = scope.tags.length;
+           while(i--) {
+             scope._filterSrcTags(scope.tags[i]);
            }
 
            // emit identifier
