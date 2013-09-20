@@ -345,9 +345,7 @@
              group,
              value,
              i,
-             o,
-             locals,
-             obj,
+             srcWatch,
              model,
              pureStrings = false,
              stringArray = false,
@@ -370,6 +368,7 @@
                return {
                  itemName: match[3],
                  source: $parse(match[4]),
+                 sourceName: match[4],
                  viewMapper: $parse(match[2] || match[1]),
                  modelMapper: $parse(match[1])
                };
@@ -419,6 +418,64 @@
                  throw 'list of tags must be an array or delimited string';
                }
                return arr;
+             },
+             /**
+              * Updates the source tag information.  Sets a watch so we
+              * know if the source values change.
+              */
+               updateSrc = function updateSrc() {
+               var locals,
+                 i,
+                 o,
+                 obj;
+               // default to NOT letting users add new tags in this case.
+               scope.options.addable = scope.options.addable || false;
+               srcResult = parse(attrs.src);
+               source = srcResult.source(scope.$parent);
+
+               if (angular.isUndefined(source)) {
+                 return;
+               }
+               if (angular.isFunction(srcWatch)) {
+                 srcWatch();
+               }
+               srcWatch =
+               scope.$parent.$watch(srcResult.sourceName,
+                 function (newVal, oldVal) {
+                   if (newVal !== oldVal) {
+                     updateSrc();
+                   }
+                 }, true);
+               locals = {};
+               if (angular.isDefined(source)) {
+                 for (i = 0; i < source.length; i++) {
+                   locals[srcResult.itemName] = source[i];
+                   obj = {};
+                   obj.value = srcResult.modelMapper(scope.$parent, locals);
+                   if (obj.value.group || obj.value.value) {
+                     group = obj.value.group;
+                     value = obj.value.value;
+                   }
+                   else {
+                     value = obj.value;
+                   }
+                   o = {};
+                   if (angular.isObject(obj.value)) {
+                     o = angular.extend(angular.extend(o, obj.value), {
+                       name: srcResult.viewMapper(scope.$parent, locals),
+                       value: value,
+                       group: group
+                     });
+                   } else {
+                     o = {
+                       name: srcResult.viewMapper(scope.$parent, locals),
+                       value: value,
+                       group: group
+                     };
+                   }
+                   scope.srcTags.push(o);
+                 }
+               }
              };
 
            // merge options
@@ -438,17 +495,20 @@
             * in the format which we originally specified (see below)
             */
            scope.$watch('tags', function (value, oldValue) {
+             var i;
              if (value !== oldValue) {
-
                if (stringArray || pureStrings) {
                  value = value.map(function (tag) {
                    return tag.name;
                  });
+                 scope.model.length = 0;
+                 for (i = 0; i < value.length; i++) {
+                   scope.model.push(value[i]);
+                 }
                  if (pureStrings) {
-                   value = value.join(scope.options.delimiter);
+                   scope.model = value.join(scope.options.delimiter);
                  }
                }
-               scope.model = value;
              }
            }, true);
 
@@ -480,41 +540,8 @@
            // this stuff takes the parsed comprehension expression and
            // makes a srcTags array full of tag objects out of it.
            scope.srcTags = [];
-           if (attrs.src) {
-             // default to NOT letting users add new tags in this case.
-             scope.options.addable = scope.options.addable || false;
-             srcResult = parse(attrs.src);
-             source = srcResult.source(scope.$parent);
-             locals = {};
-             if (angular.isDefined(source)) {
-               for (i = 0; i < source.length; i++) {
-                 locals[srcResult.itemName] = source[i];
-                 obj = {};
-                 obj.value = srcResult.modelMapper(scope.$parent, locals);
-                 if (obj.value.group || obj.value.value) {
-                   group = obj.value.group;
-                   value = obj.value.value;
-                 }
-                 else {
-                   value = obj.value;
-                 }
-                 o = {};
-                 if (angular.isObject(obj.value)) {
-                   o = angular.extend(obj.value, {
-                     name: srcResult.viewMapper(scope.$parent, locals),
-                     value: value,
-                     group: group
-                   });
-                 } else {
-                   o = {
-                     name: srcResult.viewMapper(scope.$parent, locals),
-                     value: value,
-                     group: group
-                   };
-                 }
-                 scope.srcTags.push(o);
-               }
-             }
+           if (angular.isDefined(attrs.src)) {
+             updateSrc();
            } else {
              // if you didn't specify a src, you must be able to type in new tags.
              scope.options.addable = true;
