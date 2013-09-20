@@ -265,7 +265,7 @@
             * Inspects whatever you typed to see if there were character(s) of
             * concern.
             */
-           element.bind('keypress',
+           element.bind('keyup',
              function (evt) {
                scope.$apply(function () {
                  // to "complete" a tag
