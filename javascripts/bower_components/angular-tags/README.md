@@ -6,13 +6,11 @@ Pure AngularJS tagging widget with typeahead support courtesy of [ui-bootstrap](
 Current Version
 ---------------
 ```
-0.2.5
+0.2.7
 ```
-
 
 Installation
 ------------
-
 ```
 bower install angular-tags
 ```
@@ -22,6 +20,8 @@ Requirements
 
 - [AngularJS](http://angularjs.org)
 - [ui-bootstrap](http://angular-ui.github.io/bootstrap) (ui.bootstrap.typeahead module)
+- [Bootstrap CSS](http://getbootstrap.com) (optional)
+- [Font Awesome](http://fortawesome.github.io/Font-Awesome/) (optional)
 
 Running Tests
 -------------
@@ -43,6 +43,11 @@ to run the tests.  This will grab the test deps from bower, and run them against
 
 Usage
 =====
+
+### Demo
+
+<a href="http://decipherinc.github.io/angular-tags">Demo here</a>.
+
 
 ### Setup
 
