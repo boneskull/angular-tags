@@ -27,8 +27,8 @@
       src="javascripts/bower_components/angular-tags/dist/angular-tags-0.2.5-tpls.js"></script>
   <script src="javascripts/main.js"></script>
   <style type="text/css">
-      .white {
-        color: darkblue;
+      .black {
+        color: black;
       }
       .red {
         color: darkred;
@@ -84,10 +84,24 @@
       <p>Like this:</p>
 
       <p>
-        <tags data-options="{addable: true, classes: {white: 'white', red: 'red'}}"
+        <tags
+              data-options="{addable: true, classes: {white: 'white', red: 'red'}}"
               data-src="s as s.name for s in sourceTags"
               data-model="tags"></tags>
       </p>
+
+      <p>
+        And the markup:
+
+        <pre style='color:#000000; background:#ffffff;'>
+<span style='color:#a65700; '>&lt;</span><span style='color:#5f5035; '>tags</span><span style='color:#274796; '> </span>
+<span style='color:#274796; '>&#xa0;&#xa0;</span><span style='color:#074726; '>data</span><span style='color:#274796; '>-options</span><span style='color:#808030; '>=</span><span style='color:#0000e6; '>"{addable: true, classes: {white: 'black', red: 'red'}}"</span><span style='color:#274796; '></span>
+<span style='color:#274796; '>&#xa0;&#xa0;</span><span style='color:#074726; '>data</span><span style='color:#274796; '>-</span><span style='color:#074726; '>src</span><span style='color:#808030; '>=</span><span style='color:#0000e6; '>"s as s.name for s in sourceTags"</span><span style='color:#274796; '></span>
+<span style='color:#274796; '>&#xa0;&#xa0;</span><span style='color:#074726; '>data</span><span style='color:#274796; '>-model</span><span style='color:#808030; '>=</span><span style='color:#0000e6; '>"tags"</span><span style='color:#a65700; '>></span><span style='color:#a65700; '>&lt;/</span><span style='color:#5f5035; '>tags</span><span style='color:#a65700; '>></span>
+</pre>
+      </p>
+
+
       <h3>
         <a name="how-do-i-get-it" class="anchor"
            href="#how-do-i-get-it"><span

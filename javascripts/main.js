@@ -6,7 +6,6 @@
     .controller('MainCtrl', function ($scope) {
 
       $scope.tags = [
-
         {
           name: 'beef', group: 'red'
         },
