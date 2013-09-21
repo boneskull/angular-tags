@@ -91,7 +91,6 @@
       {name: 'deer'}
     ]), 'tags are as expected');
 
-
     markup =
     '<tags model="foo" options="{classes: {group: \'groupClass\'}}"></tags>'
     scope.$apply(function () {
@@ -147,30 +146,57 @@
     });
     $timeout.flush();
 
-    Q.equal(tpl.scope().srcTags.indexOf(chickens), -1, 'srctags have no "chickens"');
+    Q.equal(tpl.scope().srcTags.indexOf(chickens), -1,
+      'srctags have no "chickens"');
+    $timeout.verifyNoPendingTasks();
 
-    chickens = {value: 1, name: 'chickens', foo: 'bar'};
+    var chickens = {value: 1, name: 'chickens', foo: 'bar'};
+    var frogs = {value: 3, name: 'frogs', foo: 'spam'};
     markup =
     '<tags model="foo" src="s as s.name for s in stuff"></tags>';
     scope.$apply(function () {
-      scope.foo = [chickens];
+      scope.foo = [chickens, frogs];
       scope.stuff = [
         chickens,
         {value: 2, name: 'steer', foo: 'baz'}
       ];
       tpl = $compile(markup)(scope);
     });
+    $timeout.flush();
+    Q.strictEqual(tpl.scope()._deletedSrcTags[0], chickens,
+      'assert chickens wound up in deletedSrcTags');
 
-    scope.$apply('foo = []');
-    Q.deepEqual(tpl.scope().tags, [], 'tags is now empty');
-    Q.deepEqual(angular.toJson(tpl.scope().srcTags), angular.toJson([
-      {value: 1, name: 'chickens', foo: 'bar'},
-      {value: 2, name: 'steer', foo: 'baz'}
+    Q.strictEqual(tpl.scope().tags[0], chickens,
+      'tags is just "chickens"');
+    scope.$apply(function () {
+      scope.foo = [frogs];
+    });
+
+    Q.strictEqual(tpl.scope().tags[0], frogs, 'tags contains only "frogs"');
+    Q.equal(JSON.stringify(tpl.scope()._deletedSrcTags), JSON.stringify([]),
+      'assert deletedSrcTags is empty');
+
+    Q.equal(angular.toJson(tpl.scope().srcTags), angular.toJson([
+      {value: 2, name: 'steer', foo: 'baz'},
+      {value: 1, name: 'chickens', foo: 'bar'}
     ]), 'srcTags have all the things');
 
-    markup =
-    '<tags model="foo" src="s as s.name for s in stuff"></tags>';
     scope.$apply(function () {
+      scope.foo = [chickens];
+    });
+    $timeout.flush();
+    Q.equal(angular.toJson(tpl.scope().srcTags), angular.toJson([
+      {value: 2, name: 'steer', foo: 'baz'}
+    ]), 'srcTags has no "chickens"');
+
+    scope.$apply('stuff = []');
+
+    Q.deepEqual(tpl.scope().srcTags, [], 'srcTags is now empty');
+
+    markup =
+    '<tags model="foo" typeahead-options="{minLength: minLength}" src="s as s.name for s in stuff"></tags>';
+    scope.$apply(function () {
+      scope.minLength = 3;
       scope.foo = [
         {name: 'owls', group: 'group'},
         {name: 'cheese', group: 'group'}
@@ -199,6 +225,9 @@
 
     Q.equal(tpl.find('.typeahead').length, 1,
       'typeahead popup is injected into DOM');
+
+    Q.equal(tpl.find('input').attr('data-typeahead-min-length'), '3',
+      'assert min length made it into typeahead options');
 
     // since it's a bitch to try and use jquery to work with typeahead
     // just pretend it's there and run the cb.

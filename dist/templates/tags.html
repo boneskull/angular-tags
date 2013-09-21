@@ -19,8 +19,15 @@
            data-ng-model="inputTag"
            class="decipher-tags-input"
            data-typeahead="stag as stag.name for stag in srcTags|filter:$viewValue|orderBy:orderBy"
-           data-typeahead-on-select="add($item); selectArea()"
-           data-typeahead-editable="allowsEditable"/>
+           data-typeahead-input-formatter="{{typeaheadOptions.inputFormatter}}"
+           data-typeahead-loading="{{typeaheadOptions.loading}}"
+           data-typeahead-min-length="{{typeaheadOptions.minLength}}"
+           data-typeahead-template-url="{{typeaheadOptions.templateUrl}}"
+           data-typeahead-wait-ms="{{typeaheadOptions.waitMs}}"
+
+           data-typeahead-editable="{{typeaheadOptions.allowsEditable}}"
+           data-typeahead-on-select="add($item) && selectArea() && typeaheadOptions.onSelect()"
+        />
 
   </span>
 </div>
