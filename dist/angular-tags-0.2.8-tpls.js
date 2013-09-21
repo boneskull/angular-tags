@@ -587,8 +587,9 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
              scope.orderBy = data;
            });
 
-           attrs.$observe('typeaheadOptions', function(newVal) {
-             if(newVal) {
+           // pass typeahead options through
+           attrs.$observe('typeaheadOptions', function (newVal) {
+             if (newVal) {
                scope.typeaheadOptions = $parse(newVal)(scope.$parent);
              } else {
                scope.typeaheadOptions = {};
@@ -624,7 +625,7 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
                }
                watchTags();
              }
-           });
+           }, true);
 
            watchTags();
 

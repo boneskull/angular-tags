@@ -536,8 +536,9 @@
              scope.orderBy = data;
            });
 
-           attrs.$observe('typeaheadOptions', function(newVal) {
-             if(newVal) {
+           // pass typeahead options through
+           attrs.$observe('typeaheadOptions', function (newVal) {
+             if (newVal) {
                scope.typeaheadOptions = $parse(newVal)(scope.$parent);
              } else {
                scope.typeaheadOptions = {};
@@ -573,7 +574,7 @@
                }
                watchTags();
              }
-           });
+           }, true);
 
            watchTags();
 
