@@ -93,8 +93,6 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
   tags.controller('TagsCtrl',
     ['$scope', '$timeout', function ($scope, $timeout) {
 
-      var deletedSrcTags = [];
-
       /**
        * Figures out what classes to put on the tag span.  It'll add classes
        * if defined by group, and it'll add a selected class if the tag
@@ -129,7 +127,7 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
           $timeout(function () {
             $scope.srcTags.splice(idx, 1);
           });
-          deletedSrcTags.push(tag);
+          $scope._deletedSrcTags.push(tag);
           return true;
         }
         return false;
@@ -196,8 +194,8 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
         var idx;
         $scope.tags.splice($scope.tags.indexOf(tag), 1);
 
-        if (idx = deletedSrcTags.indexOf(tag) >= 0) {
-          deletedSrcTags.splice(idx, 1);
+        if (idx = $scope._deletedSrcTags.indexOf(tag) >= 0) {
+          $scope._deletedSrcTags.splice(idx, 1);
           if ($scope.srcTags.indexOf(tag) === -1) {
             $scope.srcTags.push(tag);
           }
@@ -526,22 +524,15 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
                  obj;
                // default to NOT letting users add new tags in this case.
                scope.options.addable = scope.options.addable || false;
+               scope.srcTags = [];
                srcResult = parse(attrs.src);
                source = srcResult.source(scope.$parent);
-
                if (angular.isUndefined(source)) {
                  return;
                }
                if (angular.isFunction(srcWatch)) {
                  srcWatch();
                }
-               srcWatch =
-               scope.$parent.$watch(srcResult.sourceName,
-                 function (newVal, oldVal) {
-                   if (newVal !== oldVal) {
-                     updateSrc();
-                   }
-                 }, true);
                locals = {};
                if (angular.isDefined(source)) {
                  for (i = 0; i < source.length; i++) {
@@ -566,6 +557,14 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
                    scope.srcTags.push(o);
                  }
                }
+
+               srcWatch =
+               scope.$parent.$watch(srcResult.sourceName,
+                 function (newVal, oldVal) {
+                   if (newVal !== oldVal) {
+                     updateSrc();
+                   }
+                 }, true);
              };
 
            // merge options
@@ -614,15 +613,30 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
 
            // watch model for changes and update tags as appropriate
            scope.tags = [];
+           scope._deletedSrcTags = [];
            scope.$watch('model', function (newVal) {
+             var deletedTag, idx;
              if (angular.isDefined(newVal)) {
                tagsWatch();
                scope.tags = format(newVal);
+
                // remove already used tags
                i = scope.tags.length;
                while (i--) {
                  scope._filterSrcTags(scope.tags[i]);
                }
+
+               // restore any deleted things to the src array that happen to not
+               // be in the new value.
+               i = scope._deletedSrcTags.length;
+               while (i--) {
+                 deletedTag = scope._deletedSrcTags[i];
+                 if (idx = newVal.indexOf(deletedTag) === -1) {
+                   scope.srcTags.push(deletedTag);
+                   scope._deletedSrcTags.splice(i, 1);
+                 }
+               }
+
                watchTags();
              }
            }, true);
