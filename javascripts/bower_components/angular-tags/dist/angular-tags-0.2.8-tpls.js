@@ -1,3 +1,54 @@
+angular.module('decipher.tags.templates', ['templates/tags.html', 'templates/tag.html']);
+
+angular.module("templates/tags.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/tags.html",
+    "<div class=\"decipher-tags\" data-ng-mousedown=\"selectArea()\">\n" +
+    "\n" +
+    "  <div class=\"decipher-tags-taglist\">\n" +
+    "    <span data-ng-repeat=\"tag in tags|orderBy:orderBy\"\n" +
+    "          data-ng-mousedown=\"$event.stopPropagation()\">\n" +
+    "      <ng-include src=\"options.tagTemplateUrl\"></ng-include>\n" +
+    "    </span>\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <span class=\"container-fluid\" data-ng-show=\"toggles.inputActive\">\n" +
+    "    <input ng-if=\"!srcTags.length\"\n" +
+    "           type=\"text\"\n" +
+    "           data-ng-model=\"inputTag\"\n" +
+    "           class=\"decipher-tags-input\"/>\n" +
+    "    <!-- may want to fiddle with limitTo here, but it was inhibiting my results\n" +
+    "    so perhaps there is another way -->\n" +
+    "    <input ng-if=\"srcTags.length\"\n" +
+    "           type=\"text\"\n" +
+    "           data-ng-model=\"inputTag\"\n" +
+    "           class=\"decipher-tags-input\"\n" +
+    "           data-typeahead=\"stag as stag.name for stag in srcTags|filter:$viewValue|orderBy:orderBy\"\n" +
+    "           data-typeahead-input-formatter=\"{{typeaheadOptions.inputFormatter}}\"\n" +
+    "           data-typeahead-loading=\"{{typeaheadOptions.loading}}\"\n" +
+    "           data-typeahead-min-length=\"{{typeaheadOptions.minLength}}\"\n" +
+    "           data-typeahead-template-url=\"{{typeaheadOptions.templateUrl}}\"\n" +
+    "           data-typeahead-wait-ms=\"{{typeaheadOptions.waitMs}}\"\n" +
+    "\n" +
+    "           data-typeahead-editable=\"{{typeaheadOptions.allowsEditable}}\"\n" +
+    "           data-typeahead-on-select=\"add($item) && selectArea() && typeaheadOptions.onSelect()\"\n" +
+    "        />\n" +
+    "\n" +
+    "  </span>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("templates/tag.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/tag.html",
+    "<span class=\"decipher-tags-tag\"\n" +
+    "      data-ng-class=\"getClasses(tag)\">{{tag.name}}\n" +
+    "      <i class=\"icon-remove\"\n" +
+    "         data-ng-click=\"remove(tag)\">\n" +
+    "      </i>\n" +
+    "</span>\n" +
+    "");
+}]);
+
 /*global angular*/
 (function () {
   'use strict';
@@ -42,8 +93,6 @@
   tags.controller('TagsCtrl',
     ['$scope', '$timeout', function ($scope, $timeout) {
 
-      var deletedSrcTags = [];
-
       /**
        * Figures out what classes to put on the tag span.  It'll add classes
        * if defined by group, and it'll add a selected class if the tag
@@ -78,7 +127,7 @@
           $timeout(function () {
             $scope.srcTags.splice(idx, 1);
           });
-          deletedSrcTags.push(tag);
+          $scope._deletedSrcTags.push(tag);
           return true;
         }
         return false;
@@ -91,8 +140,7 @@
        * @param tag
        */
       $scope.add = function add(tag) {
-        var idx,
-          _add = function _add(tag) {
+        var _add = function _add(tag) {
             $scope.tags.push(tag);
             delete $scope.inputTag;
             $scope.$emit('decipher.tags.added', {
@@ -146,8 +194,8 @@
         var idx;
         $scope.tags.splice($scope.tags.indexOf(tag), 1);
 
-        if (idx = deletedSrcTags.indexOf(tag) >= 0) {
-          deletedSrcTags.splice(idx, 1);
+        if (idx = $scope._deletedSrcTags.indexOf(tag) >= 0) {
+          $scope._deletedSrcTags.splice(idx, 1);
           if ($scope.srcTags.indexOf(tag) === -1) {
             $scope.srcTags.push(tag);
           }
@@ -476,22 +524,15 @@
                  obj;
                // default to NOT letting users add new tags in this case.
                scope.options.addable = scope.options.addable || false;
+               scope.srcTags = [];
                srcResult = parse(attrs.src);
                source = srcResult.source(scope.$parent);
-
                if (angular.isUndefined(source)) {
                  return;
                }
                if (angular.isFunction(srcWatch)) {
                  srcWatch();
                }
-               srcWatch =
-               scope.$parent.$watch(srcResult.sourceName,
-                 function (newVal, oldVal) {
-                   if (newVal !== oldVal) {
-                     updateSrc();
-                   }
-                 }, true);
                locals = {};
                if (angular.isDefined(source)) {
                  for (i = 0; i < source.length; i++) {
@@ -516,6 +557,14 @@
                    scope.srcTags.push(o);
                  }
                }
+
+               srcWatch =
+               scope.$parent.$watch(srcResult.sourceName,
+                 function (newVal, oldVal) {
+                   if (newVal !== oldVal) {
+                     updateSrc();
+                   }
+                 }, true);
              };
 
            // merge options
@@ -530,12 +579,20 @@
              inputActive: false
            };
 
-
            /**
             * When we receive this event, sort.
             */
            scope.$on('decipher.tags.sort', function (evt, data) {
              scope.orderBy = data;
+           });
+
+           // pass typeahead options through
+           attrs.$observe('typeaheadOptions', function (newVal) {
+             if (newVal) {
+               scope.typeaheadOptions = $parse(newVal)(scope.$parent);
+             } else {
+               scope.typeaheadOptions = {};
+             }
            });
 
            // determine what format we're in
@@ -556,18 +613,33 @@
 
            // watch model for changes and update tags as appropriate
            scope.tags = [];
+           scope._deletedSrcTags = [];
            scope.$watch('model', function (newVal) {
+             var deletedTag, idx;
              if (angular.isDefined(newVal)) {
                tagsWatch();
                scope.tags = format(newVal);
+
                // remove already used tags
                i = scope.tags.length;
                while (i--) {
                  scope._filterSrcTags(scope.tags[i]);
                }
+
+               // restore any deleted things to the src array that happen to not
+               // be in the new value.
+               i = scope._deletedSrcTags.length;
+               while (i--) {
+                 deletedTag = scope._deletedSrcTags[i];
+                 if (idx = newVal.indexOf(deletedTag) === -1) {
+                   scope.srcTags.push(deletedTag);
+                   scope._deletedSrcTags.splice(i, 1);
+                 }
+               }
+
                watchTags();
              }
-           });
+           }, true);
 
            watchTags();
 

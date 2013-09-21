@@ -6,7 +6,7 @@ Pure AngularJS tagging widget with typeahead support courtesy of [ui-bootstrap](
 Current Version
 ---------------
 ```
-0.2.7
+0.2.8
 ```
 
 Installation
@@ -145,6 +145,28 @@ baz = [
 ```
 
 Basically, whatever you set here will become the `value` of these tags unless you specify an entire object.
+
+### Typeahead Options
+
+You can pass options through to the typeahead module.  Simply pass a `typeahead-options` attribute to the `<tags>` element.  Available options are shown here:
+
+```javascript
+$scope.typeaheadOpts = {
+  inputFormatter: myInputFormatterFunction,
+  loading: myLoadingBoolean,
+  minLength: 3,
+  onSelect: myOnSelectFunction, // this will be run in addition to directive internals
+  templateUrl: '/path/to/my/template.html',
+  waitMs: 500,
+  allowsEditable: true
+};
+```
+
+and:
+
+```html
+<tags typeahead-options="typeaheadOpts" model="foo" src="b.value as b.name for b in baz"></tags>
+```
 
 Tag Objects
 -----------

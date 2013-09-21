@@ -19,7 +19,7 @@
   "dependencies": {
     "angular": "1.2.0-rc.2",
     "angular-ui-bootstrap-bower": "~0.6.0",
-    "angular-tags": "~0.2.7",
+    "angular-tags": "~0.2.8",
     "bootstrap-css": "~3.0.0",
     "font-awesome": "~3.2.1"
   }
