@@ -91,7 +91,7 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
    * if we actually use the same functions in both.
    */
   tags.controller('TagsCtrl',
-    ['$scope', '$timeout', function ($scope, $timeout) {
+    ['$scope', '$timeout', '$q', function ($scope, $timeout, $q) {
 
       /**
        * Figures out what classes to put on the tag span.  It'll add classes
@@ -120,18 +120,16 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
        * @returns {boolean}
        */
       $scope._filterSrcTags = function filterSrcTags(tag) {
-        var idx = $scope.srcTags.indexOf(tag);
-
-        if (idx >= 0) {
-          // wrapped in timeout or typeahead becomes confused
-          $timeout(function () {
+        // wrapped in timeout or typeahead becomes confused
+        return $timeout(function () {
+          var idx = $scope.srcTags.indexOf(tag);
+          if (idx >= 0) {
             $scope.srcTags.splice(idx, 1);
-          });
-          $scope._deletedSrcTags.push(tag);
-          return true;
-        }
-        return false;
-
+            $scope._deletedSrcTags.push(tag);
+            return;
+          }
+          return $q.reject();
+        });
       };
 
       /**
@@ -153,29 +151,33 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
               tag: tag,
               $id: $scope.$id
             });
+            dfrd.reject();
           },
-          i;
+          i,
+          dfrd = $q.defer();
 
         // don't add dupe names
         i = $scope.tags.length;
         while (i--) {
           if ($scope.tags[i].name === tag.name) {
             fail();
-            return false;
           }
         }
 
+        $scope._filterSrcTags(tag)
+          .then(function () {
+            _add(tag);
+          }, function () {
+            if ($scope.options.addable) {
+              _add(tag);
+              dfrd.resolve();
+            }
+            else {
+              fail();
+            }
+          });
 
-        if ($scope._filterSrcTags(tag)) {
-          _add(tag);
-          return true;
-        }
-        else if ($scope.options.addable) {
-          _add(tag);
-          return true;
-        }
-        fail();
-        return false;
+        return dfrd.promise;
       };
 
       /**
@@ -412,6 +414,7 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
              i,
              tagsWatch,
              srcWatch,
+             modelWatch,
              model,
              pureStrings = false,
              stringArray = false,
@@ -441,7 +444,38 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
 
              },
 
-             watchTags = function () {
+             watchModel = function watchModel() {
+               modelWatch = scope.$watch('model', function (newVal) {
+                 var deletedTag, idx;
+                 if (angular.isDefined(newVal)) {
+                   tagsWatch();
+                   scope.tags = format(newVal);
+
+                   // remove already used tags
+                   i = scope.tags.length;
+                   while (i--) {
+                     scope._filterSrcTags(scope.tags[i]);
+                   }
+
+                   // restore any deleted things to the src array that happen to not
+                   // be in the new value.
+                   i = scope._deletedSrcTags.length;
+                   while (i--) {
+                     deletedTag = scope._deletedSrcTags[i];
+                     if (idx = newVal.indexOf(deletedTag) === -1 &&
+                               scope.srcTags.indexOf(deletedTag) === -1) {
+                       scope.srcTags.push(deletedTag);
+                       scope._deletedSrcTags.splice(i, 1);
+                     }
+                   }
+
+                   watchTags();
+                 }
+               }, true);
+
+             },
+
+             watchTags = function watchTags() {
 
                /**
                 * Watches tags for changes and propagates to outer model
@@ -450,6 +484,7 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
                tagsWatch = scope.$watch('tags', function (value, oldValue) {
                  var i;
                  if (value !== oldValue) {
+                   modelWatch();
                    if (stringArray || pureStrings) {
                      value = value.map(function (tag) {
                        return tag.name;
@@ -464,6 +499,13 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
                        scope.model = value.join(scope.options.delimiter);
                      }
                    }
+                   else {
+                     scope.model.length = 0;
+                     for (i = 0; i < value.length; i++) {
+                       scope.model.push(value[i]);
+                     }
+                   }
+                   watchModel();
 
                  }
                }, true);
@@ -614,34 +656,8 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
            // watch model for changes and update tags as appropriate
            scope.tags = [];
            scope._deletedSrcTags = [];
-           scope.$watch('model', function (newVal) {
-             var deletedTag, idx;
-             if (angular.isDefined(newVal)) {
-               tagsWatch();
-               scope.tags = format(newVal);
-
-               // remove already used tags
-               i = scope.tags.length;
-               while (i--) {
-                 scope._filterSrcTags(scope.tags[i]);
-               }
-
-               // restore any deleted things to the src array that happen to not
-               // be in the new value.
-               i = scope._deletedSrcTags.length;
-               while (i--) {
-                 deletedTag = scope._deletedSrcTags[i];
-                 if (idx = newVal.indexOf(deletedTag) === -1) {
-                   scope.srcTags.push(deletedTag);
-                   scope._deletedSrcTags.splice(i, 1);
-                 }
-               }
-
-               watchTags();
-             }
-           }, true);
-
            watchTags();
+           watchModel();
 
            // this stuff takes the parsed comprehension expression and
            // makes a srcTags array full of tag objects out of it.
