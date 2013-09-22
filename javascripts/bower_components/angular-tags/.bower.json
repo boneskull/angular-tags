@@ -1,7 +1,7 @@
 {
   "name": "angular-tags",
-  "version": "0.2.8",
-  "main": "dist/angular-tags-0.2.8.js",
+  "version": "0.2.9",
+  "main": "dist/angular-tags-0.2.9.js",
   "dependencies": {
     "angular-ui-bootstrap-bower": "~0.6.0",
     "angular": "1.2.0-rc.2",
@@ -31,13 +31,13 @@
     ".idea"
   ],
   "homepage": "https://github.com/decipherinc/angular-tags",
-  "_release": "0.2.8",
+  "_release": "0.2.9",
   "_resolution": {
     "type": "version",
-    "tag": "0.2.8",
-    "commit": "3fc4fbbda6fbf3e34c88492c264f36fe8b7f461e"
+    "tag": "0.2.9",
+    "commit": "67c36517ce0cf4db0082bd8210cadf75bc568a3e"
   },
   "_source": "git://github.com/decipherinc/angular-tags.git",
-  "_target": "~0.2.7",
+  "_target": "~0.2.8",
   "_originalSource": "angular-tags"
 }
