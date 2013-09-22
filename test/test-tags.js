@@ -127,13 +127,20 @@
     Q.equal(tpl.find('.decipher-tags-tag:first').text().trim(), 'cheese',
       'we sorted since "cheese" is first');
 
+    scope.$apply(function() {
+      tpl.scope().tags = [scope.foo[1]];
+    });
+
+    Q.strictEqual(scope.foo[0], tpl.scope().tags[0], 'tags updates the model');
+    Q.equal(scope.foo.length, 1, 'only "cheese" in the model');
+
     // let's play with src
     markup = '<tags model="foo" src="honky cat"</tags>';
     Q.raises(function () {
       $compile(markup)(scope);
     }, 'error thrown if bad src');
 
-    var chickens = {value: 1, name: 'chickens', foo: 'bar'};
+    chickens = {value: 1, name: 'chickens', foo: 'bar'};
     markup =
     '<tags model="foo" src="s as s.name for s in stuff"></tags>';
     scope.$apply(function () {
@@ -223,6 +230,7 @@
       }
     ], 'src tags are parsed correctly');
 
+
     Q.equal(tpl.find('.typeahead').length, 1,
       'typeahead popup is injected into DOM');
 
@@ -238,7 +246,9 @@
     scope.$apply(function () {
       tpl.scope().add(tpl.scope().srcTags[0]);
       tpl.scope().selectArea();
+
     });
+    $timeout.flush();
 
     Q.deepEqual(angular.toJson(tpl.scope().tags), angular.toJson([
       {
@@ -256,10 +266,30 @@
       }
     ]), 'tags now include "chickens"');
 
-    // srcTags splice happens in a timeout, so flush it.
-    $timeout.flush();
     Q.equal(tpl.scope().srcTags.length, 1, '"chickens" removed from srcTags');
     Q.ok(tpl.scope().toggles.inputActive, 'input is active');
+
+    scope.$apply(function() {
+      tpl.scope().remove(tpl.scope().tags[2]);
+    });
+
+    Q.deepEqual(angular.toJson(tpl.scope().srcTags), angular.toJson([
+
+      {
+        "value": 2,
+        "name": "steer",
+        "foo": "baz"
+      },
+      {
+        "value": 1,
+        "name": "chickens",
+        "foo": "bar"
+      }
+    ]), 'src tags are restored correctly');
+
+
+
+
   });
 
 
