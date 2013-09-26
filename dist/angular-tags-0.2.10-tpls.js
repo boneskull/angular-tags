@@ -402,7 +402,9 @@ angular.module("templates/tag.html", []).run(["$templateCache", function($templa
        return {
          controller: 'TagsCtrl',
          restrict: 'E',
-         template: '<ng-include data-src="options.templateUrl"></ng-include>',
+         replace: true,
+         // IE8 is really, really fussy about this.
+         template: '<div><div data-ng-include="options.templateUrl"></div></div>',
          scope: {
            model: '='
          },
