@@ -34,6 +34,7 @@ module.exports = function (grunt) {
       scripts: {
         files: [
           'src/tags.js',
+          'templates/tags.html',
           'test/test-tags.html',
           'test/test-tags.js'
         ],
@@ -45,7 +46,7 @@ module.exports = function (grunt) {
         base: '.'
       },
       dist: {
-        src: ['./templates/tags.html', './templates/tag.html'],
+        src: ['./templates/tags.html'],
         dest: 'dist/generated/templates.js',
         module: 'decipher.tags.templates'
 
@@ -109,10 +110,6 @@ module.exports = function (grunt) {
           {
             src: ['templates/tags.html'],
             dest: 'dist/templates/tags.html'
-          },
-          {
-            src: ['templates/tag.html'],
-            dest: 'dist/templates/tag.html'
           },
           {
             src: ['less/tags.less'],

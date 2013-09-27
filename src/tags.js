@@ -14,8 +14,7 @@
   var defaultOptions = {
       delimiter: ',', // if given a string model, it splits on this
       classes: {}, // obj of group names to classes
-      templateUrl: 'templates/tags.html', // default template
-      tagTemplateUrl: 'templates/tag.html' // default 'tag' template
+      templateUrl: 'templates/tags.html' // default template
     },
 
   // for parsing comprehension expression
@@ -593,7 +592,8 @@
            if (angular.isString(model)) {
              pureStrings = true;
            }
-           else if (angular.isArray(model)) {
+           // XXX: avoid for now while fixing "empty array" bug
+           else if (angular.isArray(model) && false) {
              stringArray = true;
              i = model.length;
              while (i--) {

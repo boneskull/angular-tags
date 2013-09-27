@@ -100,6 +100,9 @@
       ];
       tpl = $compile(markup)(scope);
     });
+    console.log(tpl.html());
+    console.log(JSON.stringify(tpl.scope().tags));
+    console.log(JSON.stringify(tpl.scope().options));
     Q.equal(tpl.find('.groupClass').length,
       2, 'group classes get set');
 
