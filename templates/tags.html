@@ -4,7 +4,7 @@
     <span data-ng-repeat="tag in tags|orderBy:orderBy"
           data-ng-mousedown="$event.stopPropagation()">
 <span class="decipher-tags-tag" data-ng-class="getClasses(tag)">{{tag.name}}
-      <i class="icon-remove" data-ng-click="remove(tag)"> </i>
+      <i class="icon-remove" data-ng-click="remove(tag)"></i>
 </span>
     </span>
   </div>

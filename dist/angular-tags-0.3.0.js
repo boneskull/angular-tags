@@ -13,8 +13,7 @@
 
   var defaultOptions = {
       delimiter: ',', // if given a string model, it splits on this
-      classes: {}, // obj of group names to classes
-      templateUrl: 'templates/tags.html' // default template
+      classes: {} // obj of group names to classes
     },
 
   // for parsing comprehension expression
@@ -128,6 +127,9 @@
         return dfrd.promise;
       };
 
+      $scope.trust = function(tag) {
+        return $sce.trustAsHtml(tag.name);
+      };
       /**
        * Toggle the input box active.
        */
@@ -352,7 +354,7 @@
          restrict: 'E',
          replace: true,
          // IE8 is really, really fussy about this.
-         template: '<div><div data-ng-include="options.templateUrl"></div></div>',
+         template: '<div><div data-ng-include="\'templates/tags.html\'"></div></div>',
          scope: {
            model: '='
          },
@@ -466,15 +468,8 @@
               * @param value
               */
                format = function format(value) {
-               var arr = [],
-                 sanitize = function sanitize(tag) {
-                   return tag
-                     .replace(/&/g, '&amp;')
-                     .replace(/</g, '&lt;')
-                     .replace(/>/g, '&gt;')
-                     .replace(/'/g, '&#39;')
-                     .replace(/"/g, '&quot;');
-                 };
+               var arr = [];
+
                if (angular.isUndefined(value)) {
                  return;
                }
@@ -483,7 +478,7 @@
                    .split(scope.options.delimiter)
                    .map(function (item) {
                      return {
-                       name: sanitize(item.trim())
+                       name: item.trim()
                      };
                    });
                }
@@ -491,11 +486,11 @@
                  arr = value.map(function (item) {
                    if (angular.isString(item)) {
                      return {
-                       name: sanitize(item.trim())
+                       name: item.trim()
                      };
                    }
                    else if (item.name) {
-                     item.name = sanitize(item.name.trim());
+                     item.name = item.name.trim();
                    }
                    return item;
                  });

@@ -78,7 +78,7 @@
     scope.$apply(function () {
       scope.foo = [
         {name: 'mice'},
-        {name: 'deer'}
+        {name: 'ampers&'}
       ];
       tpl = $compile(markup)(scope);
     });
@@ -88,7 +88,7 @@
 
     Q.equal(angular.toJson(tpl.scope().tags), angular.toJson([
       {name: 'mice'},
-      {name: 'deer'}
+      {name: 'ampers&'}
     ]), 'tags are as expected');
 
     markup =
@@ -100,9 +100,7 @@
       ];
       tpl = $compile(markup)(scope);
     });
-    console.log(tpl.html());
-    console.log(JSON.stringify(tpl.scope().tags));
-    console.log(JSON.stringify(tpl.scope().options));
+
     Q.equal(tpl.find('.groupClass').length,
       2, 'group classes get set');
 
