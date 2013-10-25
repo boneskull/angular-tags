@@ -304,7 +304,7 @@ angular.module("templates/tags.html", []).run(["$templateCache", function($templ
             * Inspects whatever you typed to see if there were character(s) of
             * concern.
             */
-           element.bind('keyup',
+           element.bind('keydown',
              function (evt) {
                scope.$apply(function () {
                  // to "complete" a tag
@@ -315,7 +315,7 @@ angular.module("templates/tags.html", []).run(["$templateCache", function($templ
 
                    // or if you want to get out of the text area
                  } else if (kcCancelInput.indexOf(evt.which) >=
-                            0) {
+                            0 && !evt.isPropagationStopped()) {
                    cancel();
                    scope.toggles.inputActive =
                    false;

@@ -6,7 +6,7 @@ Pure AngularJS tagging widget with typeahead support courtesy of [ui-bootstrap](
 Current Version
 ---------------
 ```
-0.3.0
+0.3.1
 ```
 
 Installation
