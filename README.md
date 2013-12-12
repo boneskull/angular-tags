@@ -94,7 +94,7 @@ This will render the tags contained in `foo` (if anything) and provide an input 
 ```javascript
 foo = 'foo,bar';
 foo = ['foo', 'bar'];
-foo = [{name: 'foo', name: 'bar'}];
+foo = [{name: 'foo'}, {name: 'bar'}];
 ```
 
 All will render identically.  Depending on the format you use, you will get the same type back when adding tags via the input.  For example, if you add "baz" in the input and your original model happened to be a delimited string, you will get:
