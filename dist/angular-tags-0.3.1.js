@@ -13,9 +13,7 @@
 
   var defaultOptions = {
       delimiter: ',', // if given a string model, it splits on this
-      classes: {}, // obj of group names to classes
-      templateUrl: 'templates/tags.html', // default template
-      tagTemplateUrl: 'templates/tag.html' // default 'tag' template
+      classes: {} // obj of group names to classes
     },
 
   // for parsing comprehension expression
@@ -129,6 +127,9 @@
         return dfrd.promise;
       };
 
+      $scope.trust = function(tag) {
+        return $sce.trustAsHtml(tag.name);
+      };
       /**
        * Toggle the input box active.
        */
@@ -266,7 +267,7 @@
             * Inspects whatever you typed to see if there were character(s) of
             * concern.
             */
-           element.bind('keyup',
+           element.bind('keydown',
              function (evt) {
                scope.$apply(function () {
                  // to "complete" a tag
@@ -277,7 +278,7 @@
 
                    // or if you want to get out of the text area
                  } else if (kcCancelInput.indexOf(evt.which) >=
-                            0) {
+                            0 && !evt.isPropagationStopped()) {
                    cancel();
                    scope.toggles.inputActive =
                    false;
@@ -353,7 +354,7 @@
          restrict: 'E',
          replace: true,
          // IE8 is really, really fussy about this.
-         template: '<div><div data-ng-include="options.templateUrl"></div></div>',
+         template: '<div><div data-ng-include="\'templates/tags.html\'"></div></div>',
          scope: {
            model: '='
          },
@@ -467,15 +468,8 @@
               * @param value
               */
                format = function format(value) {
-               var arr = [],
-                 sanitize = function sanitize(tag) {
-                   return tag
-                     .replace(/&/g, '&amp;')
-                     .replace(/</g, '&lt;')
-                     .replace(/>/g, '&gt;')
-                     .replace(/'/g, '&#39;')
-                     .replace(/"/g, '&quot;');
-                 };
+               var arr = [];
+
                if (angular.isUndefined(value)) {
                  return;
                }
@@ -484,7 +478,7 @@
                    .split(scope.options.delimiter)
                    .map(function (item) {
                      return {
-                       name: sanitize(item.trim())
+                       name: item.trim()
                      };
                    });
                }
@@ -492,11 +486,11 @@
                  arr = value.map(function (item) {
                    if (angular.isString(item)) {
                      return {
-                       name: sanitize(item.trim())
+                       name: item.trim()
                      };
                    }
                    else if (item.name) {
-                     item.name = sanitize(item.name.trim());
+                     item.name = item.name.trim();
                    }
                    return item;
                  });
@@ -593,7 +587,8 @@
            if (angular.isString(model)) {
              pureStrings = true;
            }
-           else if (angular.isArray(model)) {
+           // XXX: avoid for now while fixing "empty array" bug
+           else if (angular.isArray(model) && false) {
              stringArray = true;
              i = model.length;
              while (i--) {
