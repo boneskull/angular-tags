@@ -1,33 +1,23 @@
 {
   "name": "angular-tags",
-  "version": "0.3.1",
-  "main": "dist/angular-tags-0.3.0.js",
+  "version": "1.0.0",
+  "repository": "git://github.com/badwing/angular-tags.git",
+  "main": "angular-tags.tpls.js",
   "dependencies": {
-    "angular-ui-bootstrap-bower": "~0.6.0",
-    "angular": "1.2.0-rc.1",
-    "font-awesome": "~3.2.1",
-    "bootstrap-css": "~3.0.0"
+    "angular": "1.2.0-rc.2",
+    "angular-bootstrap": "*"
   },
   "devDependencies": {
-    "sinonjs": "1.7.1",
-    "sinon-qunit": "1.0.0",
-    "qunit": "1.12.0",
-    "angular-mocks": "1.2.0-rc.1",
-    "jquery": "~2.0.3"
+    "angular-mocks": "*",
+    "jquery": "*"
   },
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests",
-    "Gruntfile.js",
-    "package.json",
-    ".travis.yml",
-    "src",
-    "/templates",
-    "/less",
-    "dist/generated",
-    ".idea"
-  ]
+  "files": [
+    "tags.tpls.js",
+    "tags.js",
+    "tags.tpls.min.js",
+    "tags.min.js"
+  ],
+  "resolutions": {
+    "angular": "1.2.0-rc.2"
+  }
 }

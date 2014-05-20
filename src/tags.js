@@ -3,13 +3,13 @@
   'use strict';
 
   try {
-    angular.module('decipher.tags.templates');
+    angular.module('badwing.tags.templates');
   } catch (e) {
-    angular.module('decipher.tags.templates', []);
+    angular.module('badwing.tags.templates', []);
   }
 
-  var tags = angular.module('decipher.tags',
-    ['ui.bootstrap.typeahead', 'decipher.tags.templates']);
+  var tags = angular.module('badwing.tags',
+    ['ui.bootstrap.typeahead', 'badwing.tags.templates']);
 
   var defaultOptions = {
       delimiter: ',', // if given a string model, it splits on this
@@ -45,7 +45,7 @@
        * if defined by group, and it'll add a selected class if the tag
        * is preselected to delete.
        * @param tag
-       * @returns {{}}
+       * @returns {Object<String,Boolean>}
        */
       $scope.getClasses = function getGroupClass(tag) {
         var r = {};
@@ -81,20 +81,20 @@
 
       /**
        * Adds a tag to the list of tags, and if in the typeahead list,
-       * removes it from that list (and saves it).  emits decipher.tags.added
+       * removes it from that list (and saves it).  emits badwing.tags.added
        * @param tag
        */
       $scope.add = function add(tag) {
         var _add = function _add(tag) {
             $scope.tags.push(tag);
             delete $scope.inputTag;
-            $scope.$emit('decipher.tags.added', {
+            $scope.$emit('badwing.tags.added', {
               tag: tag,
               $id: $scope.$id
             });
           },
           fail = function fail() {
-            $scope.$emit('decipher.tags.addfailed', {
+            $scope.$emit('badwing.tags.addfailed', {
               tag: tag,
               $id: $scope.$id
             });
@@ -127,9 +127,6 @@
         return dfrd.promise;
       };
 
-      $scope.trust = function(tag) {
-        return $sce.trustAsHtml(tag.name);
-      };
       /**
        * Toggle the input box active.
        */
@@ -139,14 +136,14 @@
 
       /**
        * Removes a tag.  Restores stuff into srcTags if it came from there.
-       * Kills any selected tag.  Emit a decipher.tags.removed event.
+       * Kills any selected tag.  Emit a badwing.tags.removed event.
        * @param tag
        */
       $scope.remove = function remove(tag) {
         var idx;
         $scope.tags.splice($scope.tags.indexOf(tag), 1);
 
-        if (idx = $scope._deletedSrcTags.indexOf(tag) >= 0) {
+        if ((idx = $scope._deletedSrcTags.indexOf(tag) >= 0)) {
           $scope._deletedSrcTags.splice(idx, 1);
           if ($scope.srcTags.indexOf(tag) === -1) {
             $scope.srcTags.push(tag);
@@ -155,7 +152,7 @@
 
         delete $scope.toggles.selectedTag;
 
-        $scope.$emit('decipher.tags.removed', {
+        $scope.$emit('badwing.tags.removed', {
           tag: tag,
           $id: $scope.$id
         });
@@ -165,7 +162,7 @@
 
   /**
    * Directive for the 'input' tag itself, which is of class
-   * decipher-tags-input.
+   * badwing.tags-input.
    */
   tags.directive('decipherTagsInput',
     ['$timeout', '$filter', '$rootScope',
@@ -291,7 +288,7 @@
                    // otherwise if we're typing in here, just drop the selected tag.
                  } else {
                    delete scope.toggles.selectedTag;
-                   scope.$emit('decipher.tags.keyup',
+                   scope.$emit('badwing.tags.keyup',
                      {
                        value: ngModel.$viewValue,
                        $id: scope.$id
@@ -414,8 +411,9 @@
                    i = scope._deletedSrcTags.length;
                    while (i--) {
                      deletedTag = scope._deletedSrcTags[i];
-                     if (idx = newVal.indexOf(deletedTag) === -1 &&
-                               scope.srcTags.indexOf(deletedTag) === -1) {
+                     if ((idx = newVal.indexOf(deletedTag) === -1 &&
+                               scope.srcTags.indexOf(deletedTag) === -1))
+                     {
                        scope.srcTags.push(deletedTag);
                        scope._deletedSrcTags.splice(i, 1);
                      }
@@ -569,7 +567,7 @@
            /**
             * When we receive this event, sort.
             */
-           scope.$on('decipher.tags.sort', function (evt, data) {
+           scope.$on('badwing.tags.sort', function (evt, data) {
              scope.orderBy = data;
            });
 
@@ -617,7 +615,7 @@
 
            // emit identifier
            scope.$id = ++id;
-           scope.$emit('decipher.tags.initialized', {
+           scope.$emit('badwing.tags.initialized', {
              $id: scope.$id,
              model: scope.model
            });

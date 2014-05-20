@@ -1,148 +1,153 @@
+'use strict';
+
 module.exports = function (grunt) {
+
+  require('time-grunt')(grunt);
 
   // Project configuration.
   grunt.initConfig({
     pkg: require('./package.json'),
-
-    qunit: {
-      all: {
+    jshint: {
+      options: {
+        reporter: require('jshint-stylish'),
+        jshintrc: true
+      },
+      src_ci: ['./src/tags.js'],
+      gruntfile_ci: ['./Gruntfile.js'],
+      test_ci: ['./test/tags.spec.js'],
+      src: {
         options: {
-          urls: [
-            'http://localhost:8000/test/test-tags.html'
-          ],
           force: true
-        }
-      }
-    },
-    connect: {
-      server: {
+        },
+        src: ['./src/tags.js']
+      },
+      gruntfile: {
         options: {
-          port: 8000,
-          base: '.'
-        }
-      }
-    },
-    bower: {
-      install: {
+          force: true
+        },
+        src: ['./Gruntfile.js']
+      },
+      test: {
         options: {
-          targetDir: './test/lib',
-          cleanup: true
-        }
+          force: true
+        },
+        src: ['./test/tags.spec.js']
+      }
+
+    },
+    'bower-install-simple': {
+      options: {
+        directory: './test/support/'
       }
     },
     watch: {
-      scripts: {
+      src: {
         files: [
-          'src/tags.js',
-          'templates/tags.html',
-          'test/test-tags.html',
-          'test/test-tags.js'
+          './src/tags.js',
+          './templates/**/*.html'
         ],
-        tasks: ['test']
+        tasks: ['jshint:src', 'bower-install-simple', 'karma:dev:run']
+      },
+      test: {
+        files: ['./test/tags.spec.js'],
+        tasks: ['jshint:test', 'bower-install-simple', 'karma:dev:run']
+      },
+      gruntfile: {
+        files: ['Gruntfile.js'],
+        tasks: ['jshint:gruntfile']
       }
     },
     html2js: {
       options: {
         base: '.'
       },
-      dist: {
-        src: ['./templates/tags.html'],
-        dest: 'dist/generated/templates.js',
-        module: 'decipher.tags.templates'
-
+      templates: {
+        src: 'templates/tags.html',
+        dest: 'temp/tags.html.js',
+        module: 'badwing.tags.templates'
       }
     },
     less: {
       dist: {
         options: {
-          paths: ["."],
           yuicompress: false
         },
         files: {
-          "dist/<%=pkg.name%>-<%=pkg.version%>.css": "less/tags.less"
+          "./demo/css/tags.css": "demo/less/tags.less"
         }
       }
     },
     uglify: {
+      options: {
+        report: 'min',
+        sourceMap: false
+      },
       dist: {
         files: {
-          'dist/<%= pkg.name %>-<%= pkg.version %>.min.js': [
-            'dist/generated/tags.js'
-          ]
-        },
-        options: {
-          report: 'min',
-          sourceMap: 'dist/<%=' +
-                     ' pkg.name %>-<%= pkg.version %>.map.js',
-          sourceMapRoot: '/',
-          sourceMapPrefix: 1,
-          sourceMappingURL: '<%= pkg.name %>-<%= pkg.version %>.map.js'
+          './dist/tags.min.js': ['src/tags.js']
         }
       },
       distTpls: {
         files: {
-          'dist/<%= pkg.name %>-<%= pkg.version %>-tpls.min.js': [
-            'dist/generated/*.js'
-          ]
-        },
-        options: {
-          report: 'min',
-          sourceMap: 'dist/<%= pkg.name %>-<%= pkg.version %>-tpls.map.js',
-          sourceMapRoot: '/',
-          sourceMapPrefix: 1,
-          sourceMappingURL: '<%= pkg.name %>-<%= pkg.version %>-tpls.map.js'
+          './dist/tags.tpls.min.js': ['temp/templates.js', 'src/tags.js']
         }
-      }
-    },
-    concat: {
-      dist: {
-        src: ['dist/generated/tags.js'],
-        dest: 'dist/<%=pkg.name%>-<%=pkg.version%>.js'
-      },
-      distTpls: {
-        src: ['dist/generated/templates.js', 'dist/generated/tags.js'],
-        dest: 'dist/<%=pkg.name%>-<%=pkg.version%>-tpls.js'
       }
     },
     copy: {
       dist: {
         files: [
           {
-            src: ['templates/tags.html'],
-            dest: 'dist/templates/tags.html'
+            src: ['./templates/tags.html'],
+            dest: './dist/templates/tags.html'
           },
           {
-            src: ['less/tags.less'],
-            dest: 'dist/<%=pkg.name%>-<%=pkg.version%>.less'
-          },
-          {
-            src: ['src/tags.js'],
-            dest: 'dist/generated/tags.js'
+            src: ['./src/tags.js'],
+            dest: './dist/tags.js'
           }
         ]
+      }
+    },
+    karma: {
+      options: {
+        frameworks: ['mocha', 'chai-sinon'],
+        files: [
+          './test/support/jquery/jquery.js',
+          './test/support/angular/angular.js',
+          './test/support/angular-mocks/angular-mocks.js',
+          './test/support/angular-bootstrap/ui-bootstrap-tpls.js',
+          './temp/tags.html.js',
+          './src/tags.js',
+          './test/tags.spec.js'
+        ],
+        browsers: ['Chrome'],
+        reporters: ['story'],
+        basePath: '.',
+        logLevel: 'DEBUG',
+        port: 9876
+      },
+      continuous: {
+        options: {
+          singleRun: true
+        }
+      },
+      dev: {
+        options: {
+          background: true
+        }
       }
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-qunit');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-bower-task');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-html2js');
-  grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-copy');
+  require('load-grunt-tasks')(grunt);
 
   grunt.registerTask('test',
-    ['build', 'bower:install', 'connect', 'qunit']);
-  grunt.registerTask('build', ['less', 'html2js', 'copy', 'concat', 'uglify']);
+    [
+      'build', 'jshint:src_ci', 'jshint:gruntfile_ci', 'jshint:test_ci',
+      'bower-install-simple', 'karma:continuous'
+    ]);
+  grunt.registerTask('dev',
+    ['build', 'jshint', 'bower-install-simple', 'karma:dev', 'watch']);
+  grunt.registerTask('build', ['less', 'html2js', 'copy', 'uglify']);
   grunt.registerTask('default', ['build']);
 
-  grunt.event.on('qunit.log',
-    function (result, actual, expected, message) {
-      if (!!result) {
-        grunt.log.ok(message);
-      }
-    });
 };
