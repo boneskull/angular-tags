@@ -26,7 +26,7 @@
         tpl = $compile(markup)(scope);
         scope.$apply();
 
-        expect(tpl).find('.decipher-tags-tag').length).to.equal(2);
+        expect(tpl.find('.decipher-tags-tag').length).to.equal(2);
 
       }));
 
