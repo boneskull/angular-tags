@@ -12,14 +12,14 @@ module.exports = function (grunt) {
         reporter: require('jshint-stylish'),
         jshintrc: true
       },
-      src_ci: ['./src/tags.js'],
+      src_ci: ['./tags.js'],
       gruntfile_ci: ['./Gruntfile.js'],
       test_ci: ['./test/tags.spec.js'],
       src: {
         options: {
           force: true
         },
-        src: ['./src/tags.js']
+        src: ['./tags.js']
       },
       gruntfile: {
         options: {
@@ -43,8 +43,8 @@ module.exports = function (grunt) {
     watch: {
       src: {
         files: [
-          './src/tags.js',
-          './templates/**/*.html'
+          './tags.js',
+          './tags.html'
         ],
         tasks: ['jshint:src', 'bower-install-simple', 'karma:dev:run']
       },
@@ -62,7 +62,7 @@ module.exports = function (grunt) {
         base: '.'
       },
       templates: {
-        src: 'templates/tags.html',
+        src: 'tags.html',
         dest: 'temp/tags.html.js',
         module: 'badwing.tags.templates'
       }
@@ -84,27 +84,13 @@ module.exports = function (grunt) {
       },
       dist: {
         files: {
-          './dist/tags.min.js': ['src/tags.js']
+          './tags.min.js': ['tags.js']
         }
       },
       distTpls: {
         files: {
-          './dist/tags.tpls.min.js': ['temp/templates.js', 'src/tags.js']
+          './tags.tpls.min.js': ['temp/templates.js', 'tags.js']
         }
-      }
-    },
-    copy: {
-      dist: {
-        files: [
-          {
-            src: ['./templates/tags.html'],
-            dest: './dist/templates/tags.html'
-          },
-          {
-            src: ['./src/tags.js'],
-            dest: './dist/tags.js'
-          }
-        ]
       }
     },
     karma: {
@@ -116,7 +102,7 @@ module.exports = function (grunt) {
           './test/support/angular-mocks/angular-mocks.js',
           './test/support/angular-bootstrap/ui-bootstrap-tpls.js',
           './temp/tags.html.js',
-          './src/tags.js',
+          './tags.js',
           './test/tags.spec.js'
         ],
         browsers: ['PhantomJS'],
@@ -159,7 +145,7 @@ module.exports = function (grunt) {
     ]);
   grunt.registerTask('dev',
     ['build', 'jshint', 'bower-install-simple', 'karma:dev', 'watch']);
-  grunt.registerTask('build', ['less', 'html2js', 'copy', 'uglify']);
+  grunt.registerTask('build', ['less', 'html2js', 'uglify']);
   grunt.registerTask('default', ['build']);
 
 };
