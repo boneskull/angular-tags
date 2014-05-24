@@ -111,7 +111,7 @@ module.exports = function (grunt) {
       options: {
         frameworks: ['mocha', 'chai-sinon'],
         files: [
-          './test/support/jquery/jquery.js',
+          './test/support/jquery/dist/jquery.js',
           './test/support/angular/angular.js',
           './test/support/angular-mocks/angular-mocks.js',
           './test/support/angular-bootstrap/ui-bootstrap-tpls.js',
@@ -119,7 +119,7 @@ module.exports = function (grunt) {
           './src/tags.js',
           './test/tags.spec.js'
         ],
-        browsers: ['Chrome'],
+        browsers: ['PhantomJS'],
         reporters: ['story'],
         basePath: '.',
         logLevel: 'DEBUG',
@@ -133,6 +133,18 @@ module.exports = function (grunt) {
       dev: {
         options: {
           background: true
+        }
+      }
+    },
+    devUpdate: {
+      options: {
+        semver: false
+      },
+      report: {
+      },
+      upgrade: {
+        options: {
+          updateType: 'prompt'
         }
       }
     }

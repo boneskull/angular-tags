@@ -18,17 +18,16 @@
 
     describe('tags', function () {
 
-      it('should format properly', inject(function ($templateCache) {
+      it('should format properly',function () {
         var markup = '<tags model="foo"></tags>',
           tpl;
 
         scope.foo = 'lizards, people';
         tpl = $compile(markup)(scope);
         scope.$apply();
-
         expect(tpl.find('.decipher-tags-tag').length).to.equal(2);
 
-      }));
+      });
 
     });
   });
