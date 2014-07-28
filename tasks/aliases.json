@@ -1,0 +1,23 @@
+{
+  "test": [
+    "jshint",
+    "bower-install-simple",
+    "karma:continuous",
+    "karma:continuous-main",
+    "karma:continuous-min"    
+  ],
+  "dev": [
+    "bower-install-simple",
+    "karma:dev:start",
+    "watch"
+  ],
+  "build": [
+    "less",
+    "html2js",
+    "concat",
+    "uglify"
+  ],
+  "default": [
+    "build"
+  ]
+}

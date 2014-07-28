@@ -21,6 +21,7 @@
     "afterEach": true,
     "expect": true,
     "sinon": true,
-    "inject": true
+    "inject": true,
+    "angular": true
   }
 }

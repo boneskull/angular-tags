@@ -1,0 +1,25 @@
+{
+  "src": {
+    "files": [
+      "<%= jshint.lib_test %>"
+    ],
+    "tasks": [
+      "jshint:src_test",
+      "bower-install-simple",
+      "karma:dev:run"
+    ]
+  },
+  "task": {
+    "files": [
+      "<%= jshint.src_task %>",
+      "./package.json",
+      "./bower.json"      
+    ],
+    "tasks": [
+      "jshint:gruntfile"
+    ],
+    "options": {
+      "reload": true
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "options": {
+    "base": "./lib/",
+    "quoteChar": "'"
+  },
+  "templates": {
+    "src": "./lib/tags.html",
+    "dest": "build/tags.html.js",
+    "module": "badwing.tags.templates"
+  }
+}

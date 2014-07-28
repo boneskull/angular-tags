@@ -1,0 +1,19 @@
+{
+  "options": {
+    "banner": "<%= banner %>",
+    "footer": "<%= footer %>"
+  },
+  "distTpls": {
+    "src": [
+      "./build/tags.html.js",
+      "./lib/*.js"
+    ],
+    "dest": "./tags.tpls.js"
+  },
+  "dist": {
+    "src": [
+      "./lib/*.js"
+    ],
+    "dest": "./tags.js"
+  }
+}

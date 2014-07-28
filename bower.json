@@ -1,14 +1,20 @@
 {
   "name": "angular-tags",
-  "version": "1.0.0",
+  "version": "0.3.1",
   "repository": "git://github.com/badwing/angular-tags.git",
-  "main": "tags.tpls.js",
+  "authors": [
+    "Christopher Hiller <chiller@badwing.com>"
+  ],
+  "homepage": "http://boneskull.github.io/angular-tags",
+  "license": "MIT",
+  "main": "tags.js",
+  "min": "tags.min.js",
   "dependencies": {
-    "angular": ">=1.1.5"
+    "angular-ui-bootstrap-bower": "~0.11.0"
   },
   "devDependencies": {
-    "angular-mocks": "*",
-    "jquery": "*"
+    "jquery": "*",
+    "angular-mocks": "1.2.0"
   },
   "ignore": [
     "package.json",
@@ -16,8 +22,6 @@
     ".*",
     "demo/",
     "test/",
-    "temp/",
-    "src/",
-    "node_modules/"
+    "lib/"
   ]
 }

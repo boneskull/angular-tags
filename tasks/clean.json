@@ -1,0 +1,36 @@
+{
+    "options": {
+      "frameworks": [
+        "mocha",
+        "chai-sinon"
+      ],
+      "files": [
+        "./test/support/jquery/dist/jquery.js",
+        "./test/support/angular/angular.js",
+        "./test/support/angular-mocks/angular-mocks.js",
+        "./test/support/angular-bootstrap/ui-bootstrap-tpls.js",
+        "./temp/tags.html.js",
+        "./tags.js",
+        "./test/tags.spec.js"
+      ],
+      "browsers": [
+        "PhantomJS"
+      ],
+      "reporters": [
+        "story"
+      ],
+      "basePath": ".",
+      "logLevel": "DEBUG",
+      "port": 9876
+    },
+    "continuous": {
+      "options": {
+        "singleRun": true
+      }
+    },
+    "dev": {
+      "options": {
+        "background": true
+      }
+    }
+  }

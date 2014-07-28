@@ -1,0 +1,17 @@
+{
+  "options": {
+    "report": "min",
+    "sourceMap": true,
+    "banner": "<%= banner_min %>" 
+  },
+  "dist": {
+    "files": {
+      "./tags.min.js": "./tags.js"
+    }
+  },
+  "distTpls": {
+    "files": {
+      "./tags.tpls.min.js": "./tags.tpls.js"
+    }
+  }
+}

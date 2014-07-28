@@ -1,0 +1,84 @@
+{
+  "options": {
+    "frameworks": [
+      "mocha",
+      "chai",
+      "chai-as-promised",
+      "sinon-chai"
+    ],
+    "browsers": [
+      "PhantomJS"
+    ],
+    "reporters": [
+      "story"
+    ],
+    "autoWatch": false,
+    "singleRun": false,
+    "logLevel": "info"
+  },
+  "continuous": {
+    "options": {
+      "singleRun": true,
+      "port": 9876,
+      "files": ["<%= test_deps %>", "<%= lib_files %>", "<%= test_files %>"],
+      "preprocessors": {
+        "./lib/**/*.js": "coverage"
+      },
+      "reporters": [
+        "story",
+        "coverage"
+      ],
+      "coverageReporter": {
+        "reporters": [
+          {
+            "type": "lcov",
+            "dir": "coverage/"
+          },
+          {
+            "type": "text-summary"
+          }
+        ]
+      }
+    }
+  },
+  "continuous-main": {
+    "options": {
+      "singleRun": true,
+      "files": ["<%= test_deps %>", "<%= pkg.main %>", "<%= test_files %>"]
+    }
+  },
+  "continuous-min": {
+    "options": {
+      "singleRun": true,
+      "files": ["<%= test_deps %>", "<%= pkg.min %>", "<%= test_files %>"]
+    }
+  },
+  "dev": {
+    "options": {
+      "browsers": [
+        "Chrome"
+      ],
+      "background": true,
+      "files": ["<%= test_deps %>", "<%= src_files %>", "<%= test_files %>"],
+      "preprocessors": {
+        "./lib/*.js": "coverage"
+      },
+      "reporters": [
+        "story",
+        "coverage"
+      ],
+      "port": 9877,
+      "coverageReporter": {
+        "reporters": [
+          {
+            "type": "html",
+            "dir": "coverage/"
+          },
+          {
+            "type": "text-summary"
+          }
+        ]
+      }
+    }
+  }
+}

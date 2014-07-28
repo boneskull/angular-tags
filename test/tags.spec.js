@@ -18,15 +18,38 @@
 
     describe('tags', function () {
 
-      it('should format properly',function () {
-        var markup = '<tags model="foo"></tags>',
-          tpl;
+      var markup = '<tags model="foo"></tags>',
+        tpl;
 
+      it('should format properly',function () {
         scope.foo = 'lizards, people';
         tpl = $compile(markup)(scope);
         scope.$apply();
-        expect(tpl.find('.decipher-tags-tag').length).to.equal(2);
 
+        expect(tpl.find('.decipher-tags-tag').length).to.equal(2);
+      });
+
+      it('should output proper tags', function () {
+        scope.foo = 'lizards, people';
+        tpl = $compile(markup)(scope);
+        scope.$apply();
+        
+        console.log(tpl);
+
+        // strips $$hashKey
+        expect(angular.toJson(tpl.scope().tags)).to.equal(angular.toJson([
+          {name: 'lizards'},
+          {name: 'people'}
+        ]));
+      });
+
+      it('should have the correct data model', function() {
+        scope.foo = 'lizards, people';
+        tpl = $compile(markup)(scope);
+        scope.$apply();
+
+        expect(tpl.scope().srcTags).to.deep.equal([]);
+        expect(scope.foo).to.equal('lizards, people');
       });
 
     });
