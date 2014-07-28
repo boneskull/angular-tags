@@ -11,7 +11,7 @@
   },
   "distTpls": {
     "files": {
-      "./tags.tpls.min.js": "./tags.tpls.js"
+      "./tags-tpls.min.js": "./tags-tpls.js"
     }
   }
 }

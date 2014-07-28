@@ -1,5 +1,14 @@
 {
-  "options": {
-    "directory": "./test/support/"
+  "test": {
+    "options": {
+      "directory": "./test/support/",
+      "production": false
+    }
+  },
+  "demo": {
+    "options": {
+      "directory": "./demo/support/",
+      "production": true
+    }
   }
 }

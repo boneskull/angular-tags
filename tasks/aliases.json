@@ -1,21 +1,29 @@
 {
   "test": [
+    "build",
     "jshint",
-    "bower-install-simple",
+    "bower-install-simple:test",
     "karma:continuous",
-    "karma:continuous-main",
     "karma:continuous-min"    
   ],
   "dev": [
-    "bower-install-simple",
+    "bower-install-simple:test",
     "karma:dev:start",
     "watch"
   ],
   "build": [
+    "clean:build",
+    "clean:demo",
     "less",
     "html2js",
     "concat",
     "uglify"
+  ],
+  "demo": [
+    "build",
+    "copy",
+    "bower-install-simple:demo",
+    "connect"
   ],
   "default": [
     "build"

@@ -8,7 +8,7 @@
       "./build/tags.html.js",
       "./lib/*.js"
     ],
-    "dest": "./tags.tpls.js"
+    "dest": "<%= pkg.main %>"
   },
   "dist": {
     "src": [

@@ -1,0 +1,6 @@
+{
+  "demo": {
+    "src": "<%= pkg.main %>",
+    "dest": "./demo/<%= pkg.main %>"
+  }
+}

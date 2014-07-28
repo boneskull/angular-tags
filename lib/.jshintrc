@@ -1,5 +1,5 @@
 {
-  "bitwise": true,
+  "bitwise": false,
   "curly": true,
   "eqeqeq": true,
   "forin": true,
@@ -8,10 +8,11 @@
   "nonew": true,
   "undef": true,
   "strict": true,
+  "browser": true,
+  "node": false,
   "indent": 2,
   "expr": true,
   "newcap": false,
-  "node": true,
-  "quotmark": "single",
-  "predef": ["window", "angular"]
+  "predef": ["angular", "sinon"],
+  "globalstrict": true
 }

@@ -1,0 +1,10 @@
+{
+  "demo": {
+    "options": {
+      "port": 9001,
+      "base": "./demo",
+      "open": true,
+      "keepalive": true
+    }
+  }
+}

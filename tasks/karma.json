@@ -20,7 +20,7 @@
     "options": {
       "singleRun": true,
       "port": 9876,
-      "files": ["<%= test_deps %>", "<%= lib_files %>", "<%= test_files %>"],
+      "files": ["<%= test_deps %>", "<%= pkg.main %>", "<%= test_files %>"],
       "preprocessors": {
         "./lib/**/*.js": "coverage"
       },
@@ -41,12 +41,6 @@
       }
     }
   },
-  "continuous-main": {
-    "options": {
-      "singleRun": true,
-      "files": ["<%= test_deps %>", "<%= pkg.main %>", "<%= test_files %>"]
-    }
-  },
   "continuous-min": {
     "options": {
       "singleRun": true,
@@ -59,7 +53,7 @@
         "Chrome"
       ],
       "background": true,
-      "files": ["<%= test_deps %>", "<%= src_files %>", "<%= test_files %>"],
+      "files": ["<%= test_deps %>", "<%= lib_files %>", "<%= test_files %>"],
       "preprocessors": {
         "./lib/*.js": "coverage"
       },

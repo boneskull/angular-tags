@@ -1,5 +1,7 @@
 /*! angular-tags - v0.3.1 - 2014-07-27
-* Copyright (c) 2014 Christopher Hiller <chiller@badwing.com>; Licensed MIT */
+* http://boneskull.github.io/angular-tags
+* Copyright (c) 2014 Christopher Hiller <chiller@badwing.com>
+ Licensed MIT */
 
 (function (window, angular) {
   'use strict';
@@ -630,4 +632,5 @@
      }]);
 
 })();
+
 })(window, window.angular);

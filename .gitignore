@@ -3,4 +3,4 @@ build/
 **/support/
 coverage/
 .coveralls.yml
-
+demo/*.js

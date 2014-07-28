@@ -13,15 +13,9 @@
   "expr": true,
   "newcap": false,
   "devel": true,
-  "predef": {
-    "module": true,
-    "describe": true,
-    "it": true,
-    "beforeEach": true,
-    "afterEach": true,
-    "expect": true,
-    "sinon": true,
-    "inject": true,
-    "angular": true
-  }
+  "quotmark": "single",
+  "predef": [
+    "describe", "it", "beforeEach", "afterEach", "before", "after", "expect", "angular", "sinon",
+    "inject", "module", "sandbox", "debaser", "debase"
+  ]
 }

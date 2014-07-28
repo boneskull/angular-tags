@@ -7,8 +7,8 @@
   ],
   "homepage": "http://boneskull.github.io/angular-tags",
   "license": "MIT",
-  "main": "tags.js",
-  "min": "tags.min.js",
+  "main": "tags-tpls.js",
+  "min": "tags-tpls.min.js",
   "dependencies": {
     "angular-ui-bootstrap-bower": "~0.11.0"
   },

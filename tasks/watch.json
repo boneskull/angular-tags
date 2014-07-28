@@ -1,17 +1,18 @@
 {
-  "src": {
+  "lib_test": {
     "files": [
       "<%= jshint.lib_test %>"
     ],
     "tasks": [
-      "jshint:src_test",
+      "jshint:lib_test",
       "bower-install-simple",
+      "build",
       "karma:dev:run"
     ]
   },
   "task": {
     "files": [
-      "<%= jshint.src_task %>",
+      "<%= jshint.task %>",
       "./package.json",
       "./bower.json"      
     ],

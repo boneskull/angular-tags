@@ -7,7 +7,7 @@
       $compile,
       scope;
 
-    beforeEach(module('badwing.tags', 'ngMock', 'badwing.tags.templates',
+    beforeEach(module('badwing.tags', 'ngMock', 
       'template/typeahead/typeahead-popup.html'));
 
     beforeEach(inject(function ($rootScope, _$compile_) {
