@@ -1,7 +1,19 @@
-angular-tags [![Build Status](https://travis-ci.org/decipherinc/angular-tags.png?branch=master)](https://travis-ci.org/decipherinc/angular-tags)
-============
+# Achtung!
 
-Pure AngularJS tagging widget with typeahead support courtesy of [ui-bootstrap](http://angular-ui.github.io/bootstrap).
+> I don't have much time to work on this project and I no longer use it for anything.
+
+> I'd love it if I could work with somebody to get v1.0.0 out the door. I have refactors, bug fixes, and new tests in the pipeline, but there's more work to do.
+
+> If any user of this library wants to assist me, I'll happily answer any questions, provide tasks, and discuss direction.
+
+> Once we release [v1.0.0](https://github.com/boneskull/angular-tags/tree/v1.0.0), I could potentially transfer ownership of this project to another collaborator.
+
+> *Please comment in [issue #48](https://github.com/boneskull/angular-tags/issues/48) if you are interested!*
+
+# angular-tags [![Build Status](https://api.travis-ci.org/boneskull/angular-tags.png?branch=master)](https://travis-ci.org/boneskull/angular-tags)
+
+Pure AngularJS tagging widget with typeahead support courtesy of
+[ui-bootstrap](http://angular-ui.github.io/bootstrap).
 
 Current Version
 ---------------
