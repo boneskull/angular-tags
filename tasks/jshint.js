@@ -7,8 +7,8 @@ module.exports = function jshint() {
       jshintrc: true
     },
     lib_test: [
-      "lib/*",
-      "./test/*.spec.js"
+      'lib/*',
+      './test/*.spec.js'
     ],
     task: [
       './Gruntfile.js',

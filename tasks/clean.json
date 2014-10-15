@@ -2,13 +2,14 @@
   "build": [
     "./build/**/*", 
     "<%= pkg.main %>",
-    "./tags-tpls.min.js",
+    "<%= min %>",
     "./tags.js",
     "./tags.min.js"
   ],
   "demo": [
-    "./demo/css/*", 
+    "./demo/css/*",
     "./demo/<%= pkg.main %>"
   ],
-  "bower": "**/support"
+  "bower": "**/support",
+  "coverage": "coverage/**/*"
 }

@@ -22,20 +22,23 @@ module.exports = function (grunt) {
     configPath: path.join(__dirname, 'tasks'),
     data: {
       pkg: pkg,
+      min: path.basename(pkg.main, '.js') + '.min.js',
       banner: MAIN_HEADER,
       banner_min: MIN_HEADER,
       footer: '})(window, window.angular);',
       lib_files: [
-        "./lib/*.js"
+        './lib/tags.module.js',
+        './lib/*.js'
       ],
       test_files: [
-        "./test/*.spec.js"
+        './test/*.spec.js'
       ],
       test_deps: [
-        "./test/support/jquery/dist/jquery.js",
-        "./test/support/angular/angular.js",
-        "./test/support/angular-mocks/angular-mocks.js",
-        "./test/support/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js"
+        './test/support/jquery/dist/jquery.js',
+        './test/support/angular/angular.js',
+        './test/support/angular-mocks/angular-mocks.js',
+        './test/support/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js',
+        './test/support/angular-debaser/debaser.js'
       ]
     }
   });

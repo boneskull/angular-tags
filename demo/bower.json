@@ -1,0 +1,28 @@
+{
+  "name": "angular-tags-demo",
+  "version": "1.0.0",
+  "homepage": "http://boneskull.github.io/angular-tags/",
+  "authors": [
+    "Christopher Hiller <chiller@badwing.com>"
+  ],
+  "description": "Demo for angular-tags project",
+  "main": "index.html",
+  "moduleType": [
+    "globals"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-ui-bootstrap-bower": "~0.11.2",
+    "angular": "1.3.0",
+    "fontawesome": "~4.2.0",
+    "angular-highlightjs": "~0.3.0",
+    "bootswatch-dist": "3.2.0-paper"
+  }
+}

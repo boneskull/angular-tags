@@ -10,7 +10,7 @@
       "PhantomJS"
     ],
     "reporters": [
-      "story"
+      "mocha"
     ],
     "autoWatch": false,
     "singleRun": false,
@@ -19,13 +19,12 @@
   "continuous": {
     "options": {
       "singleRun": true,
-      "port": 9876,
       "files": ["<%= test_deps %>", "<%= pkg.main %>", "<%= test_files %>"],
       "preprocessors": {
         "./lib/**/*.js": "coverage"
       },
       "reporters": [
-        "story",
+        "mocha",
         "coverage"
       ],
       "coverageReporter": {
@@ -58,10 +57,9 @@
         "./lib/*.js": "coverage"
       },
       "reporters": [
-        "story",
+        "mocha",
         "coverage"
       ],
-      "port": 9877,
       "coverageReporter": {
         "reporters": [
           {

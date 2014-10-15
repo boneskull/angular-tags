@@ -1,0 +1,8 @@
+{
+  "demo": {
+    "src": "demo/index.html",
+    "options": {
+      "cwd": "demo"
+    }
+  }
+}

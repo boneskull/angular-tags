@@ -1,8 +1,8 @@
 {
   "test": {
     "options": {
-      "directory": "./test/support/",
-      "production": false
+      "cwd": "demo",
+      "directory": "support/"
     }
   },
   "demo": {

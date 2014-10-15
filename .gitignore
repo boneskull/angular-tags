@@ -2,5 +2,6 @@ node_modules/
 build/
 **/support/
 coverage/
-.coveralls.yml
-demo/*.js
+demo/tags.css
+demo/tags-tpls.js
+

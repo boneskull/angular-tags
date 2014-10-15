@@ -1,10 +1,129 @@
 <!DOCTYPE html>
 <html>
-<head lang="en">
-  <meta charset="UTF-8">
-  <title></title>
-</head>
-<body>
+<head>
+  <meta charset='utf-8'>
+  <link rel="stylesheet" href="demo.css" />
+  <!-- bower:css -->
+  <link rel="stylesheet" href="support/fontawesome/css/font-awesome.css" />
+  <link rel="stylesheet" href="support/highlightjs/styles/default.css" />
+  <link rel="stylesheet" href="support/bootswatch-dist/css/bootstrap.css" />
+  <!-- endbower --><!--[if lt IE 9]>
+  <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 
+  <style type="text/css">
+    .black {
+      color: black;
+    }
+
+    .red {
+      color: darkred;
+    }
+  </style>
+  <title>angular-tags</title>
+</head>
+
+<body data-ng-app="badwing.tags.github.io">
+<div class="jumbotron">
+  <div class="container">
+
+    <h1>angular-tags</h1>
+
+    <p>Pure AngularJS tagging widget with typeahead support courtesy of <a
+      href="http://angular-ui.github.io/bootstrap/" target="_blank" class="fa fa-external-link">ui-bootstrap</a>.
+    </p>
+  </div>
+</div>
+
+<div class="container">
+  <h3 id="whats-angular-tags"><i class="fa fa-question-circle"></i> What's angular-tags?</h3>
+
+  <p><strong>angular-tags</strong> is a directive for <a target="_blank" class="fa fa-external-link"
+                                                         href="http://angularjs.org">AngularJS</a>
+    which allows you to enter "tags" into an input box. <strong>angular-tags</strong> is a pure
+    AngularJS widget; the only prerequisites are AngularJS and <a target="_blank"
+                                                                  class="fa fa-external-link"
+                                                                  href="http://angular-ui.github.io/bootstrap/">UI
+      Bootstrap</a>. </p>
+
+  <h3 id="example"><i class="fa fa-code"></i> Example</h3>
+
+  <p>
+    <tags data-options="{addable: true, classes: {white: 'white', red: 'red'}}"
+          data-src="s as s.name for s in sourceTags" data-model="tags"></tags>
+  </p>
+
+  <p>Markup for the above:
+  <pre data-hljs language="html">
+        &lt;tags data-options="{addable: true, classes: {white: 'white', red: 'red'}}"
+              data-src="s as s.name for s in sourceTags"
+              data-model="tags"&gt;&lt;/tags&gt;
+  </pre>
+  </p>
+  
+  <h3 id="installation"><i class="fa fa-download"></i> Installation</h3>
+
+  <p>Via <a class="fa fa-external-link" target="_blank" href="http://bower.io">Bower</a> (<em>recommended</em>):</p>
+
+  <pre data-hljs language="shell">bower install angular-tags</pre>
+
+  <p>Otherwise, clone or download a tarball from <a target="_blank" class="fa fa-external-link" href="https://github.com/badwing/angular-tags">GitHub</a>
+  </p>.
+
+  <h3 id="documentation"><i class="fa fa-file-text-o"></i> Documentation</h3>
+
+  <p><a target="_blank" class="fa fa-external-link" href="https://github.com/boneskull/angular-tags/blob/master/README.md">Yes.</a>
+  </p>
+
+  <h3 id="author"><i class="fa fa-smile-o"></i> Author</h3>
+
+  <p><a class="fa fa-external-link" target="_blank" href="http://boneskull.github.io">Christopher Hiller</a></p>
+
+</div>
+<!-- bower:js -->
+<script src="support/jquery/dist/jquery.js"></script>
+<script src="support/angular/angular.js"></script>
+<script src="support/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js"></script>
+<script src="support/highlightjs/highlight.pack.js"></script>
+<script src="support/angular-highlightjs/angular-highlightjs.js"></script>
+<script src="support/bootswatch-dist/js/bootstrap.js"></script>
+<!-- endbower -->
+<script>
+  (function () {
+    'use strict';
+
+    angular.module('badwing.tags.github.io',
+      ['badwing.tags', 'ui.bootstrap.tpls', 'hljs'])
+      .controller('MainCtrl', function ($scope) {
+
+        $scope.tags = [
+          {
+            name: 'beef', group: 'red'
+          },
+          {
+            name: 'chicken', group: 'white'
+          }
+        ];
+
+        $scope.sourceTags = $scope.tags.concat([
+          {
+            name: 'pork', group: 'red'
+          },
+          {
+            name: 'lamb', group: 'red'
+          },
+          {
+            name: 'turkey', group: 'white'
+          },
+          {
+            name: 'bison', group: 'red'
+          },
+          {
+            name: 'mutton', group: 'red'
+          }
+        ]);
+
+      });
+  })();
+</script>
 </body>
 </html>

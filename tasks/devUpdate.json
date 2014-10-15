@@ -1,6 +1,8 @@
 {
-  "options": {
-    "semver": false,
-    "updateType": "prompt"
+  "main": {
+    "options": {
+      "semver": false,
+      "updateType": "prompt"
+    }
   }
 }

@@ -1,10 +1,7 @@
 {
   "dist": {
-    "options": {
-      "yuicompress": false
-    },
     "files": {
-      "./demo/css/tags.css": "demo/less/tags.less"
+      "./demo/demo.css": "demo/demo.less"
     }
   }
 }

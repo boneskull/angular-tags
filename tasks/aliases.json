@@ -11,19 +11,28 @@
     "karma:dev:start",
     "watch"
   ],
+  "scratch": [
+    "karma:scratch:start",
+    "watch:lib_test"
+  ],
   "build": [
     "clean:build",
-    "clean:demo",
     "less",
     "html2js",
     "concat",
     "uglify"
   ],
-  "demo": [
+  "build-demo": [
     "build",
+    "clean:demo",
+    "wiredep",
     "copy",
-    "bower-install-simple:demo",
-    "connect"
+    "bower-install-simple:demo"
+  ],
+  "demo": [
+    "build-demo",
+    "connect",
+    "watch:demo"
   ],
   "default": [
     "build"

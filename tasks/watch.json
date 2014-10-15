@@ -4,7 +4,6 @@
       "<%= jshint.lib_test %>"
     ],
     "tasks": [
-      "jshint:lib_test",
       "bower-install-simple",
       "build",
       "karma:dev:run"
@@ -17,10 +16,21 @@
       "./bower.json"      
     ],
     "tasks": [
-      "jshint:gruntfile"
+      "jshint:task"
     ],
     "options": {
       "reload": true
+    }
+  },
+  "demo": {
+    "files": [
+      "demo/**/*"
+    ],
+    "tasks": [
+      "build-demo"
+    ],
+    "options": {
+      "livereload": 35729
     }
   }
 }
