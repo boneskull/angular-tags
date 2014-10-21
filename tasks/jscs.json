@@ -1,0 +1,6 @@
+{
+  "src": ["lib/*.js", "test/*.js", "Gruntfile.js"],
+  "options": {
+    "config": ".jscsrc"
+  }
+}

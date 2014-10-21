@@ -15,7 +15,19 @@
   "devel": true,
   "quotmark": "single",
   "predef": [
-    "describe", "it", "beforeEach", "afterEach", "before", "after", "expect", "angular", "sinon",
-    "inject", "module", "sandbox", "debaser", "debase"
+    "describe",
+    "it",
+    "beforeEach",
+    "afterEach",
+    "before",
+    "after",
+    "inject",
+    "module",
+    "sandbox",
+    "debaser",
+    "debase",
+    "expect",
+    "angular",
+    "sinon"
   ]
 }

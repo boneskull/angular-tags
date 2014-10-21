@@ -4,8 +4,8 @@
       "<%= jshint.lib_test %>"
     ],
     "tasks": [
-      "bower-install-simple",
-      "build",
+      "bower-install-simple:test",
+      "uglify:dev",
       "karma:dev:run"
     ]
   },
@@ -13,7 +13,7 @@
     "files": [
       "<%= jshint.task %>",
       "./package.json",
-      "./bower.json"      
+      "./bower.json"
     ],
     "tasks": [
       "jshint:task"

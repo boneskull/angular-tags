@@ -1,19 +1,13 @@
 {
-  "options": {
-    "banner": "<%= banner %>",
-    "footer": "<%= footer %>"
-  },
-  "distTpls": {
+  "main-tpls": {
     "src": [
       "./build/tags.html.js",
-      "./lib/*.js"
+      "<%= lib_files %>"
     ],
-    "dest": "<%= pkg.main %>"
+    "dest": "./build/tags-tpls.js"
   },
-  "dist": {
-    "src": [
-      "./lib/*.js"
-    ],
-    "dest": "./tags.js"
+  "main": {
+    "src": "<%= lib_files %>",
+    "dest": "./build/tags.js"
   }
 }

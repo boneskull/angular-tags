@@ -7,12 +7,11 @@
   "noempty": true,
   "nonew": true,
   "undef": true,
-  "strict": true,
+  "strict": false,
   "browser": true,
-  "node": false,
   "indent": 2,
   "expr": true,
   "newcap": false,
-  "predef": ["angular", "sinon"],
-  "globalstrict": true
+  "quotmark": "single",
+  "predef": ["angular", "tags"]
 }

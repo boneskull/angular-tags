@@ -52,7 +52,7 @@
         "Chrome"
       ],
       "background": true,
-      "files": ["<%= test_deps %>", "<%= lib_files %>", "<%= test_files %>"],
+      "files": ["<%= test_deps %>", "./build/tags-dev.js", "<%= test_files %>"],
       "preprocessors": {
         "./lib/*.js": "coverage"
       },

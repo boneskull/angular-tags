@@ -1,17 +1,41 @@
 {
   "options": {
-    "report": "min",
-    "sourceMap": true,
-    "banner": "<%= banner_min %>" 
+    "sourceMap": true
   },
-  "dist": {
+  "dev": {
     "files": {
-      "./tags.min.js": "./tags.js"
+      "./build/tags-dev.js": [
+        "./build/tags.html.js",
+        "<%= lib_files %>"
+      ]
+    },
+    "options": {
+      "wrap": true,
+      "mangle": false,
+      "compress": false,
+      "preserveComments": "all",
+      "sourceMapContents": true,
+      "beautify": {
+        "indent_start": 2,
+        "indent_level": 2,
+        "beautify": true
+      }
     }
   },
-  "distTpls": {
+  "min": {
+    "files": {
+      "./tags.min.js": "./tags.js"
+    },
+    "options": {
+      "banner": "<%= banner %>"
+    }
+  },
+  "min-tpls": {
     "files": {
       "./tags-tpls.min.js": "./tags-tpls.js"
+    },
+    "options": {
+      "banner": "<%= banner %>"
     }
   }
 }

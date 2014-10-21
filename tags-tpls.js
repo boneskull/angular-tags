@@ -19,6 +19,41 @@
   }
 }(this, function () {
 
+  angular.module('badwing.tags.templates', ['tags.html']);
+
+  angular.module('tags.html', []).run(['$templateCache', function($templateCache) {
+    $templateCache.put('tags.html',
+      '<div class="badwing-tags" data-ng-mousedown="selectArea()">\n' +
+      '\n' +
+      '  <div class="badwing-tags-taglist" data-ng-if="toggles.use_taglist">\n' +
+      '    <span data-ng-repeat="tag in tags|orderBy:orderBy" data-ng-mousedown="$event.stopPropagation()">\n' +
+      '      <span class="badwing-tags-tag" data-ng-class="getClasses(tag)">{{tag.name}}\n' +
+      '            <i class="icon-remove" data-ng-click="remove(tag)"></i>\n' +
+      '      </span>\n' +
+      '    </span>\n' +
+      '  </div>\n' +
+      '\n' +
+      '  <span data-ng-show="toggles.inputActive">\n' +
+      '    <input data-ng-if="!srcTags.length" type="text" data-ng-model="inputTag" data-tag-input/>\n' +
+      '    <!-- may want to fiddle with limitTo here, but it was inhibiting my results\n' +
+      '    so perhaps there is another way -->\n' +
+      '    <input data-ng-if="srcTags.length" type="text" data-ng-model="inputTag"\n' +
+      '           class="badwing-tags-input"\n' +
+      '           data-typeahead="stag as stag.name for stag in srcTags|filter:$viewValue|orderBy:orderBy"\n' +
+      '           data-typeahead-input-formatter="{{typeaheadOptions.inputFormatter}}"\n' +
+      '           data-typeahead-loading="{{typeaheadOptions.loading}}"\n' +
+      '           data-typeahead-min-length="{{typeaheadOptions.minLength}}"\n' +
+      '           data-typeahead-template-url="{{typeaheadOptions.templateUrl}}"\n' +
+      '           data-typeahead-wait-ms="{{typeaheadOptions.waitMs}}"\n' +
+      '\n' +
+      '           data-typeahead-editable="{{typeaheadOptions.allowsEditable}}"\n' +
+      '           data-typeahead-on-select="add($item) && selectArea() && typeaheadOptions.onSelect()"/>\n' +
+      '\n' +
+      '  </span>\n' +
+      '</div>\n' +
+      '');
+  }]);
+
 
 
     /* jshint -W079 */

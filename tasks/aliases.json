@@ -4,10 +4,11 @@
     "jshint",
     "bower-install-simple:test",
     "karma:continuous",
-    "karma:continuous-min"    
+    "karma:continuous-min"
   ],
   "dev": [
     "bower-install-simple:test",
+    "uglify:dev",
     "karma:dev:start",
     "watch"
   ],
@@ -17,14 +18,16 @@
   ],
   "build": [
     "clean:build",
-    "less",
     "html2js",
     "concat",
-    "uglify"
+    "umd",
+    "uglify:min",
+    "uglify:min-tpls"
   ],
   "build-demo": [
     "build",
     "clean:demo",
+    "less",
     "wiredep",
     "copy",
     "bower-install-simple:demo"

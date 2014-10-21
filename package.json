@@ -2,6 +2,8 @@
   "name": "angular-tags",
   "version": "1.0.0",
   "repository": "git://github.com/boneskull/angular-tags.git",
+  "author": "Christopher Hiller <chiller@badwing.com>",
+  "homepage": "http://boneskull.github.io/angular-tags",
   "devDependencies": {
     "grunt-bower-install-simple": "^1.0.3",
     "grunt-cli": "^0.1.13",
@@ -15,8 +17,10 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-dev-update": "^0.9.0",
     "grunt-html2js": "^0.2.9",
+    "grunt-jscs": "^0.8.0",
     "grunt-karma": "^0.9.0",
     "grunt-notify": "^0.3.1",
+    "grunt-umd": "git://github.com/boneskull/grunt-umd.git",
     "grunt-wiredep": "^1.9.0",
     "jshint-stylish": "^1.0.0",
     "karma-chai-plugins": "^0.2.3",
@@ -30,5 +34,7 @@
   },
   "scripts": {
     "test": "grunt test"
-  }
+  },
+  "main": "tags-tpls.js",
+  "license": "MIT"
 }

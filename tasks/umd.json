@@ -1,0 +1,18 @@
+{
+  "options": {
+    "deps": {
+      "global": "angular"
+    },
+    "template": "./tasks/banner.hbs",
+    "banner": "<%= banner %>",
+    "indent": "  "
+  },
+  "main": {
+    "src": "./build/tags.js",
+    "dest": "./tags.js"
+  },
+  "main-tpls": {
+    "src": "./build/tags-tpls.js",
+    "dest": "./tags-tpls.js"
+  }
+}

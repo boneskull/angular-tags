@@ -2,6 +2,6 @@ node_modules/
 build/
 **/support/
 coverage/
-demo/tags.css
+demo/demo.css
 demo/tags-tpls.js
-
+npm-debug.log
